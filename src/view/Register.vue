@@ -2,18 +2,24 @@
 <template>
     <div class="auth-container">
     <h2>Register</h2>
-    <form @submit.prevent="register" class="auth-form">
+    <div class="auth-form">
       <label for="username">Username:</label>
-      <input type="text" v-model="username" required>
+      <input type="text" v-model="user.UserName" required>
 
       <label for="email">Email:</label>
-      <input type="email" v-model="email" required>
+      <input type="email" v-model="user.Email" required>
 
       <label for="password">Password:</label>
-      <input type="password" v-model="password" required>
+      <input type="password" v-model="user.Password" required>
 
-      <button type="submit">Register</button>
-    </form>
+      <label for="identityNumber">IdentityNumber:</label>
+      <input type="text" v-model="user.IdentityNumber" required>
+
+      <label for="phoneNumber">PhoneNumber:</label>
+      <input type="text" v-model="user.PhoneNumber" required>
+
+      <button type="submit" @click="register">Register</button>
+    </div>
 
     <div class="auth-options">
       <p>Already have an account? <router-link to="/login">Login</router-link></p>
@@ -22,20 +28,25 @@
   </template>
   
   <script>
+  import userService from '@/services/userService';
   export default {
     name: "RegisterPage",
     data() {
       return {
-        username: '',
-        email: '',
-        password: ''
+        user: {},
       };
     },
     methods: {
-      register() {
+      async register() {
         // Đoạn mã xử lý đăng ký ở đây
-        console.log('Registering with:', this.username, this.email, this.password);
-        
+        try {
+          const res = await userService.Register(this.user)
+          console.log(res);
+          this.$router.push('/login');
+        }
+        catch(error){
+          console.log(error);
+        }
         // Trong ứng dụng thực tế, bạn có thể gửi yêu cầu đăng ký đến server,
         // xử lý xác minh và chuyển hướng sau khi đăng ký thành công.
       }

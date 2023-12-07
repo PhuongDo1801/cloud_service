@@ -2,15 +2,15 @@
 <template>
   <div class="login-container">
     <h2>Login</h2>
-    <form @submit.prevent="login" class="login-form">
-      <label for="username">Username:</label>
-      <input type="text" v-model="user.email" required>
+    <div class="login-form">
+      <label for="email">Email:</label>
+      <input type="text" v-model="user.email" required id="email">
 
       <label for="password">Password:</label>
-      <input type="password" v-model="user.password" required>
+      <input type="password" v-model="user.password" required id="password">  
 
-      <button type="submit" @click="login">Login</button>
-    </form>
+      <button @click="login">Login</button>
+    </div>
 
     <div class="login-options">
       <p>Don't have account? <router-link to="/register">Register</router-link></p>
@@ -32,7 +32,10 @@ export default {
     async login() {
       try {
         const res = await userService.Login(this.user);
-        return res;
+        console.log(res)
+        // if(res.data == true) this.$router.push('/home') 
+        if(res.status == 200) this.$router.push('/home');
+        // console.log(res);
       }
       catch(error){
         console.log(error);

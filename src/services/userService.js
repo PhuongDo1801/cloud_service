@@ -5,11 +5,11 @@ class UserService extends BaseService {
     controller = "Users"
 
     async Login(data) {
-            const response = await instances.post('/Users/login', data);
+            const response = await instances.post(`${this.controller}/login`, data);
             return response;
     }
     async Register(data) {
-            const response = await instances.post('/Users/register', data);
+            const response = await instances.post(`${this.controller}/register`, data);
             return response;
     }
 }

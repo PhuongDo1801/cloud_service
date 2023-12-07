@@ -1,8 +1,8 @@
 <template>
-    <!-- <header>
-      <router-link to="/login">Login</router-link>
-      <router-link to="/register">Register</router-link>
-    </header> -->
+    <header>
+      <!-- <router-link to="/login" v-if="isLogin">Login</router-link>
+      <router-link to="/register" v-if="isLogin">Register</router-link> -->
+    </header>
 
     <main>
       <!-- Nội dung của trang hiện tại sẽ được hiển thị ở đây -->
@@ -18,6 +18,11 @@
 
 export default {
   name: 'App',
+  data(){
+    return{
+      isLogin: false
+    }
+  }
 }
 </script>
 
