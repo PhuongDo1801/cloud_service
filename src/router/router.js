@@ -1,10 +1,12 @@
 import { createRouter, createWebHistory } from "vue-router";
-import LoginPage from "@/view/Login";
-import RegisterPage from "@/view/Register";
+import LoginPage from "@/view/user/Login";
+import RegisterPage from "@/view/user/Register";
 import DashboardPage from "@/view/Dashboard"
-import HistoryPage from "@/view/History" 
-import ServicePage from "@/view/Service"
-import PricingPage from "@/view/Pricing"
+import HistoryPage from "@/view/component/History" 
+import ServicePage from "@/view/component/Service"
+import PricingPage from "@/view/component/Pricing"
+import UserService from "@/view/component/UserService"
+import UserManagement from "@/view/admin/UserManagement"
 // Định nghĩa các routers
 const routers = [
     { path: '/', redirect: '/login' }, // Chuyển hướng từ trang gốc đến trang đăng nhập
@@ -15,7 +17,9 @@ const routers = [
       { path: '/home', component: PricingPage, },
       { path: '/history', component: HistoryPage, },
       { path: '/service', component: ServicePage, },
-      { path: '/pricing', component: PricingPage, }
+      { path: '/pricing', component: PricingPage, },
+      { path: '/userservice', component: UserService, },
+      { path: '/usermanage', component: UserManagement,}
     ]
   }
 ]
