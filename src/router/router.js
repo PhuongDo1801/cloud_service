@@ -7,14 +7,15 @@ import ServicePage from "@/view/component/Service"
 import PricingPage from "@/view/component/Pricing"
 import UserService from "@/view/component/UserService"
 import UserManagement from "@/view/admin/UserManagement"
+import HomePage from "@/view/component/Home"
 // Định nghĩa các routers
 const routers = [
     { path: '/', redirect: '/login' }, // Chuyển hướng từ trang gốc đến trang đăng nhập
   { path: '/login', component: LoginPage, name: "LoginRouter" },
   { path: '/register', component: RegisterPage, name: "RegisterRouter" },
-  {path: '/home', component: DashboardPage, name: "DashboardRouter",
+  {path: '/dashboard', component: DashboardPage, name: "DashboardRouter",
     children: [
-      { path: '/home', component: PricingPage, },
+      { path: '/home', component: HomePage, },
       { path: '/history', component: HistoryPage, },
       { path: '/service', component: ServicePage, },
       { path: '/pricing', component: PricingPage, },

@@ -1,10 +1,11 @@
 <template>
     <div class="container__left-sidebar">
         <div class="sidebar__header">
-            <i class="multidot-icon"></i>
+            <!-- <i class="multidot-icon"></i> -->
             <div class="sidebar__header-bran">
-                <img src="" alt="Logo" />
+                <img src="../assets/img/hust-Lg.png" alt="Logo" />  
             </div>
+            <h2>CloudHUST</h2>
         </div>
         <div class="sidebar__main">
             <router-link to="/home" class="option">
@@ -29,7 +30,7 @@
             </router-link>
             <router-link to="/pricing" class="option">
                 <div class="option__icon deposits-icon"></div>
-                <div class="option__content">Pricing</div>
+                <div class="option__content">Tra cứu chi phí</div>
             </router-link>
         </div>
     </div>
