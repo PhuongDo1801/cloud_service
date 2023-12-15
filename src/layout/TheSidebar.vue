@@ -8,29 +8,37 @@
             <h2>CloudHUST</h2>
         </div>
         <div class="sidebar__main">
-            <router-link to="/home" class="option">
-                <div class="option__icon overview-icon"></div>
-                <div class="option__content">Tổng quan</div>
-            </router-link>
-            <router-link to="/usermanage" class="option">
+            <router-link to="/usermanage" class="option" v-if="isAdmin">
                 <div class="option__icon overview-icon"></div>
                 <div class="option__content">Quản lý người dùng</div>
             </router-link>
-            <router-link to="/userservice" class="option">
+            <router-link to="/servicemanage" class="option" v-if="isAdmin">
+                <div class="option__icon overview-icon"></div>
+                <div class="option__content">Quản lý dịch vụ</div>
+            </router-link>
+            <router-link to="/home" class="option" v-if="isUser">
+                <div class="option__icon overview-icon"></div>
+                <div class="option__content">Tổng quan</div>
+            </router-link>
+            <router-link to="/userservice" class="option" v-if="isUser">
                 <div class="option__icon deposits-icon"></div>
                 <div class="option__content">Dịch vụ người dùng</div>
             </router-link>
-            <router-link to="/service" class="option">
+            <router-link to="/service" class="option" v-if="isUser">
                 <div class="option__icon cash-icon"></div>
                 <div class="option__content">Thông tin dịch vụ</div>
             </router-link>
-            <router-link to="/history" class="option">
+            <router-link to="/history" class="option" v-if="isUser">
                 <div class="option__icon deposits-icon"></div>
                 <div class="option__content">Lịch sử sử dụng</div>
             </router-link>
-            <router-link to="/pricing" class="option">
+            <router-link to="/pricing" class="option" v-if="isUser">
                 <div class="option__icon deposits-icon"></div>
                 <div class="option__content">Tra cứu chi phí</div>
+            </router-link>
+            <router-link to="/profile" class="option" v-if="isUser">
+                <div class="option__icon deposits-icon"></div>
+                <div class="option__content">Thông tin cá nhân</div>
             </router-link>
         </div>
     </div>
@@ -39,6 +47,21 @@
 <script>
 export default {
     name: 'TheSidebar',
+    computed: {
+    isAdmin() {
+      // Lấy vai trò từ localStorage hoặc nơi khác
+      const role = localStorage.getItem('role');
+      // Kiểm tra xem có phải là vai trò admin không
+      return role === 'admin';
+    },
+    isUser() {
+      // Lấy vai trò từ localStorage hoặc nơi khác
+      const role = localStorage.getItem('role');
+      // Kiểm tra xem có phải là vai trò user không
+      return role === 'user';
+    },
+    // Các computed properties khác nếu cần
+  },
 }
 </script>
 

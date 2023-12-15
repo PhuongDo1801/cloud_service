@@ -7,7 +7,9 @@ import ServicePage from "@/view/component/Service"
 import PricingPage from "@/view/component/Pricing"
 import UserService from "@/view/component/UserService"
 import UserManagement from "@/view/admin/UserManagement"
+import ServiceManagement from "@/view/admin/ServiceManagement"
 import HomePage from "@/view/component/Home"
+import UserProfile from "@/view/user/UserProfile"
 // Định nghĩa các routers
 const routers = [
     { path: '/', redirect: '/login' }, // Chuyển hướng từ trang gốc đến trang đăng nhập
@@ -20,7 +22,9 @@ const routers = [
       { path: '/service', component: ServicePage, },
       { path: '/pricing', component: PricingPage, },
       { path: '/userservice', component: UserService, },
-      { path: '/usermanage', component: UserManagement,}
+      { path: '/usermanage', component: UserManagement,},
+      { path: '/servicemanage', component: ServiceManagement,},
+      { path: '/profile', component: UserProfile,}
     ]
   }
 ]

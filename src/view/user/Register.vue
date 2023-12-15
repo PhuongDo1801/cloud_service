@@ -42,6 +42,7 @@ export default {
     async register() {
       // Đoạn mã xử lý đăng ký ở đây
       try {
+        this.user.Role = "user"
         const res = await userService.Register(this.user)
         console.log(res);
         this.$router.push('/login');

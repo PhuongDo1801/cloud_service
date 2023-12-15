@@ -38,11 +38,30 @@ export default {
         const res = await userService.Login(this.user);
         console.log(res)
         // if(res.data == true) this.$router.push('/home') 
-        if (res.status == 200) this.$router.push('/home');
-        // console.log(res);
+        if (res.status == 200) {
+          // Gọi API GetInfoUser để lấy thông tin người dùng
+          const userInfoResponse = await userService.GetInfoUser();
+
+          // Lưu vai trò vào localStorage
+          localStorage.setItem('role', userInfoResponse.data.Role);
+          localStorage.setItem('username', userInfoResponse.data.UserName);
+          // Chuyển hướng dựa trên vai trò
+          this.redirectBasedOnRole();
+        }
       }
       catch (error) {
         console.log(error);
+      }
+    },
+    redirectBasedOnRole() {
+      // Lấy vai trò từ localStorage
+      const role = localStorage.getItem('role');
+      console.log(role);
+      // Chuyển hướng dựa trên vai trò
+      if (role === 'admin') {
+        this.$router.push('/usermanage');
+      } else {
+        this.$router.push('/home');
       }
     }
   }
@@ -60,6 +79,7 @@ export default {
   background-size: cover;
   background-position: center;
 }
+
 .wrapper {
   width: 420px;
   background: transparent;
@@ -75,16 +95,18 @@ export default {
   font-size: 36px;
   text-align: center;
 }
+
 .input-box {
   position: relative;
   width: 100%;
   height: 50px;
   margin: 30px 0;
 }
+
 .input-box input {
   width: 100%;
   height: 100%;
-  background:  transparent;
+  background: transparent;
   border: none;
   outline: none;
   border-radius: 40px;
@@ -97,6 +119,7 @@ export default {
 .input-box ::placeholder {
   color: #FFF;
 }
+
 .input-box i {
   position: absolute;
   right: 20px;
@@ -155,7 +178,5 @@ export default {
 .register-link p a:hover {
   text-decoration: underline;
 }
-
-
 </style>
   
