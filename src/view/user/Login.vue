@@ -5,10 +5,20 @@
       <h1>Login</h1>
       <div class="login-form">
         <div class="input-box">
-          <input type="text" placeholder="Email" v-model="user.Email" required>
+          <input type="text" :class="{
+            invalid:
+              isError
+          }"
+           @input="resetError" 
+          placeholder="Email" v-model="user.Email" required>
+          <span v-if="isError">Email hoặc mật khẩu không chính xác</span>
         </div>
         <div class="input-box">
-          <input type="password" placeholder="Password" v-model="user.Password" required>
+          <input type="password" :class="{
+            invalid:
+              isError
+          }" 
+           @input="resetError" placeholder="Password" v-model="user.Password" required>
         </div>
         <div class="remember-forgot">
           <label><input type="checkbox"> Remember me</label>
@@ -30,6 +40,7 @@ export default {
   data() {
     return {
       user: {},
+      isError: false,
     };
   },
   methods: {
@@ -37,7 +48,6 @@ export default {
       try {
         const res = await userService.Login(this.user);
         console.log(res)
-        // if(res.data == true) this.$router.push('/home') 
         if (res.status == 200) {
           // Gọi API GetInfoUser để lấy thông tin người dùng
           const userInfoResponse = await userService.GetInfoUser();
@@ -50,8 +60,11 @@ export default {
         }
       }
       catch (error) {
-        console.log(error);
+        this.isError = true;
       }
+    },
+    resetError() {
+      this.isError = false;
     },
     redirectBasedOnRole() {
       // Lấy vai trò từ localStorage
@@ -101,6 +114,8 @@ export default {
   width: 100%;
   height: 50px;
   margin: 30px 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .input-box input {
@@ -120,12 +135,17 @@ export default {
   color: #FFF;
 }
 
-.input-box i {
+/* .input-box i {
   position: absolute;
   right: 20px;
   top: 50%;
   transform: translateY(-50%);
   font-size: 20px;
+} */
+.input-box span {
+  margin-top: 12px;
+  color: red;
+  font-size: 14px;
 }
 
 .wrapper .remember-forgot {
@@ -177,6 +197,10 @@ export default {
 
 .register-link p a:hover {
   text-decoration: underline;
+}
+
+.invalid {
+  border: 1px solid red !important;
 }
 </style>
   

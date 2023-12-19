@@ -19,6 +19,9 @@
         <div class="input-box">
           <input type="text" placeholder="PhoneNumber" v-model="user.PhoneNumber" required>
         </div>
+        <div class="input-box">
+          <input type="date" placeholder="PhoneNumber" v-model="user.DateOfBirth" required>
+        </div>
         <button type="submit" class="btn" @click="register">Register</button>
         <div class="login-link">
           <p>Already have an account? <router-link to="/login">Login</router-link></p>
@@ -97,7 +100,7 @@ export default {
   border: 2px solid rgba(255, 255, 255, .2);
   font-size: 16px;
   color: #FFF;
-  padding: 20px 45px 20px 20px;
+  padding: 20px 20px 20px 20px;
 }
 .input-box ::placeholder {
   color: #FFF;

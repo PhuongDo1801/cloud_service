@@ -9,7 +9,7 @@
         </div>
         <div class="sidebar__main">
             <router-link to="/usermanage" class="option" v-if="isAdmin">
-                <div class="option__icon overview-icon"></div>
+                <div class="option__icon usermanege-icon"></div>
                 <div class="option__content">Quản lý người dùng</div>
             </router-link>
             <router-link to="/servicemanage" class="option" v-if="isAdmin">
@@ -29,16 +29,20 @@
                 <div class="option__content">Thông tin dịch vụ</div>
             </router-link>
             <router-link to="/history" class="option" v-if="isUser">
-                <div class="option__icon deposits-icon"></div>
+                <div class="option__icon history-icon"></div>
                 <div class="option__content">Lịch sử sử dụng</div>
             </router-link>
             <router-link to="/pricing" class="option" v-if="isUser">
-                <div class="option__icon deposits-icon"></div>
+                <div class="option__icon search-service-icon"></div>
                 <div class="option__content">Tra cứu chi phí</div>
             </router-link>
             <router-link to="/profile" class="option" v-if="isUser">
-                <div class="option__icon deposits-icon"></div>
+                <div class="option__icon userprofile-icon"></div>
                 <div class="option__content">Thông tin cá nhân</div>
+            </router-link>
+            <router-link to="/login" class="option">
+                <div class="option__icon logout-icon"></div>
+                <div class="option__content">Logout</div>
             </router-link>
         </div>
     </div>

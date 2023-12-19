@@ -247,3 +247,35 @@
   margin-left: 20px;
   cursor: pointer;
 }
+.usermanege-icon {
+  background: url('../../assets/icon/sprite/Sprites.64af8f61.svg') no-repeat -165px -1664px;
+  width: 24px;
+	height: 24px;
+  cursor: pointer;
+}
+.userprofile-icon {
+  background: url('../../assets/icon/sprite/Sprites.64af8f61.svg') no-repeat -592px -1588px;
+  width: 24px;
+	height: 24px;
+  cursor: pointer;
+}
+.search-service-icon {
+  background: url('../../assets/icon/sprite/Sprites.64af8f61.svg') no-repeat -78px -1665px;
+  width: 24px;
+	height: 24px;
+  cursor: pointer;
+}
+.history-icon {
+  background: url('../../assets/icon/sprite/Sprites.64af8f61.svg') no-repeat -427px -1664px;
+  width: 24px;
+	height: 24px;
+  cursor: pointer;
+}
+
+.logout-icon {
+  background: url('../../assets/icon/sprite/Sprites.64af8f61.svg') no-repeat -273px -403px;
+  width: 24px;
+	height: 24px;
+  cursor: pointer;
+  /* scale: 1.2; */
+}
