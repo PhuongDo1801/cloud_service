@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h2>User and Service</h2>
+        <h2>Service</h2>
     </div>
 </template>
 

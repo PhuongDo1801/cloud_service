@@ -53,6 +53,7 @@ export default {
           const userInfoResponse = await userService.GetInfoUser();
 
           // Lưu vai trò vào localStorage
+          localStorage.setItem('email', userInfoResponse.data.Email);
           localStorage.setItem('role', userInfoResponse.data.Role);
           localStorage.setItem('username', userInfoResponse.data.UserName);
           // Chuyển hướng dựa trên vai trò

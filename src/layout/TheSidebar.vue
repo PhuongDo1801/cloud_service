@@ -26,16 +26,16 @@
             </router-link>
             <router-link to="/service" class="option" v-if="isUser">
                 <div class="option__icon cash-icon"></div>
-                <div class="option__content">Thông tin dịch vụ</div>
+                <div class="option__content">EC2</div>
             </router-link>
             <router-link to="/history" class="option" v-if="isUser">
                 <div class="option__icon history-icon"></div>
                 <div class="option__content">Lịch sử sử dụng</div>
             </router-link>
-            <router-link to="/pricing" class="option" v-if="isUser">
+            <!-- <router-link to="/pricing" class="option" v-if="isUser">
                 <div class="option__icon search-service-icon"></div>
                 <div class="option__content">Tra cứu chi phí</div>
-            </router-link>
+            </router-link> -->
             <router-link to="/profile" class="option" v-if="isUser">
                 <div class="option__icon userprofile-icon"></div>
                 <div class="option__content">Thông tin cá nhân</div>

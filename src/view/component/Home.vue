@@ -6,7 +6,22 @@
         <span>Tổng quan chi phí tháng</span>
     </div>
     <div class="home-page">
-        <apexChart type="bar" height="570px" :options="chartOptions" :series="chartSeries"
+        <div class="cost-summary">
+            <div class="total-cost">
+                <p>Tổng chi phí <span>{{ totalCost }}</span></p>
+            </div>
+            <div class="predicted-cost">
+                <p>Chi phí dự đoán tháng<span>{{ predictedCost }}</span></p>
+            </div>
+            <div class="forecast-cost">
+                <p>Dự đoán chi phí</p>
+                <input type="date" placeholder="startDate" v-model="startDate">
+                <input type="date" placeholder="endDate" v-model="endDate">
+                <button @click="forecastCost">Submit</button>
+                <span v-if="resultForecast != null">{{ resultForecast }}</span>
+            </div>
+        </div>
+        <apexChart type="bar" height="100%" :options="chartOptions" :series="chartSeries"
             :categories="chartOptions.xaxis.categories">
         </apexChart>
     </div>
@@ -23,6 +38,11 @@ export default {
     data() {
         return {
             isLoading: false,
+            totalCost: 0,
+            predictedCost: 0,
+            resultForecast: null,
+            startDate: null,
+            endDate: null,
             chartOptions: {
                 chart: {
                     type: "bar",
@@ -82,6 +102,7 @@ export default {
     },
     created() {
         this.GetCostAndService();
+        this.GetForecastedMonthEndCosts();
     },
     methods: {
         async GetCostAndService() {
@@ -97,49 +118,46 @@ export default {
                 }
                 // console.log(this.chartOptions.xaxis.categories);
                 this.chartSeries[0].data = blendedCosts;
+                this.calculateTotalCost();
                 this.isLoading = false;
             } catch (error) {
                 console.error(error);
             }
         },
+        calculateTotalCost() {
+            // Lấy mảng các chi phí từ this.chartSeries[0].data
+            const costs = this.chartSeries[0].data;
+
+            // Sử dụng hàm reduce để tính tổng
+            const totalCost = costs.reduce((acc, cost) => acc + cost, 0);
+
+            // Gán giá trị cho totalCost trong data
+            this.totalCost = totalCost;
+        },
+        async GetForecastedMonthEndCosts() {
+            const res = await AwsCostExplorerService.GetForecastedMonthEndCosts();
+            console.log(res);
+            this.predictedCost = res.data[0].MeanValue;
+        },
+        async forecastCost() {
+            try {
+                const res = await AwsCostExplorerService.GetForecastedCosts(this.startDate, this.endDate);
+                const data = res.data;
+
+                // Tính tổng của các giá trị MeanValue
+                const totalMeanValue = data.reduce((acc, forecast) => {
+                    return acc + parseFloat(forecast.MeanValue);
+                }, 0);
+                this.resultForecast = totalMeanValue;
+            }
+            catch (error) {
+                console.log(error);
+            }
+        }
     }
 };
 </script>
 
-<style>
-.home-page-title {
-    width: 100%;
-    height: 68px;
-    padding: 0 12px;
-    display: flex;
-    align-items: center;
-    /* justify-content: center; */
-}
-
-.home-page-title span {
-    font-size: 24px;
-    font-weight: 700;
-    color: #1f1f1f;
-}
-
-.home-page {
-    height: calc(100vh - 140px);
-    /* position: relative; */
-    display: flex;
-    justify-content: center;
-    /* align-items: center; */
-    flex-direction: column;
-    padding: 24px;
-}
-
-/* Đặt màu cho nền của biểu đồ */
-.apexcharts-canvas {
-    background-color: #f5f5f5;
-    padding: 0 12px;
-}
-
-.apexcharts-text tspan {
-    transform: rotate(45deg) !important;
-    font-family: "roboto" !important;
-}
+<style scoped>
+@import url('../../css/components/home.css');
 </style>

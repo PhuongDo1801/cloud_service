@@ -5,7 +5,15 @@
     <div class="history-page-title">
         <span>Lịch sử chi phí</span>
         <div class="history-page-search">
-
+            <div class="history-box">
+                <label for="">Start Date</label>
+                <input type="date" v-model="startDate">
+            </div>
+            <div class="history-box">
+                <label for="">End Date</label>
+                <input type="date" v-model="endDate">
+            </div>
+            <button @click="SearchHistory" class="btn">Submit</button>
         </div>
     </div>
     <div class="history-page">
@@ -26,6 +34,8 @@ export default {
     data() {
         return {
             isLoading: false,
+            startDate: "",
+            endDate: "",
             chartOptions: {
                 chart: {
                     type: "bar",
@@ -100,8 +110,9 @@ export default {
                     this.chartOptions.xaxis.categories.push(chartCategories[i]);
                 }
                 this.isLoading = false;
-                console.log(this.chartOptions.xaxis.categories);
+                //console.log(this.chartOptions.xaxis.categories);
             } catch (error) {
+                this.isLoading = false;
                 console.error('Error fetching cost data:', error);
             }
         },
@@ -181,19 +192,44 @@ export default {
                 console.error('Error fetching cost data:', error);
                 this.isLoading = false;
             }
+        },
+        async SearchHistory(){
+            try {
+                const res = await AwsCostExplorerService.GetHistoryCost(this.startDate, this.endDate);
+                const data = res.data;
+                console.log(data);
+                this.chartSeries[0].data = [];
+                this.chartSeries[0].data = data.map(entry => entry.TotalCost);
+                const chartCategories = data.map(entry => {
+                    // Định dạng lại ngày tháng ở đây, ví dụ: July, 2023
+                    return format(new Date(entry.TimePeriod.Start), 'MMMM, yyyy');
+                });
+                this.chartOptions.xaxis.categories.length = 0;
+                for (let i = 0; i < chartCategories.length; i++) {
+                    this.chartOptions.xaxis.categories.push(chartCategories[i]);
+                }
+                this.isLoading = false;
+                console.log(this.chartOptions.xaxis.categories);
+            }
+            catch(error)
+            {   
+                this.isLoading = false;
+                console.log(error);
+            }   
         }
 
     },
 };
 </script>
   
-<style>
+<style scoped>
 .history-page-title {
     width: 100%;
     height: 68px;
     padding: 0 12px;
     display: flex;
     align-items: center;
+    justify-content: space-between;
 }
 
 .history-page-title span {
@@ -208,6 +244,52 @@ export default {
     justify-content: center;
     flex-direction: column;
     padding: 24px;
+}
+
+.history-page-search {
+    float: right;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.history-box {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-right: 12px;
+}
+
+.history-box label {
+    font-size: 12px;
+    width: 60px;
+}
+
+.history-box input {
+    height: 28px;
+    padding-left: 12px;
+    /* border: none; */
+    outline: none;
+    border-radius: 3px;
+    border: 2px solid rgba(255, 255, 255, .2);
+}
+
+.history-page-search .btn {
+    height: 28px;
+    min-width: 80px;
+    border-radius: 3px;
+    cursor: pointer;
+    color: #FFFFFF;
+    border: none;
+    background-color: #50B83C;
+}
+
+.history-page-search .btn:hover {
+    background-color: #4acf2f;
+}
+
+.history-page-search .btn:focus {
+    background-color: #067933;
 }
 </style>
   

@@ -14,6 +14,18 @@ class AwsCostExplorerService {
         const response = await instances.get(`${this.controller}/get-last-six-months-cost-and-service`)
         return response
     }
+    async GetHistoryCost(startDate, endDate){
+        const response = await instances.get(`${this.controller}/history-cost-data?startDate=${startDate}&endDate=${endDate}`)
+        return response
+    }
+    async GetForecastedMonthEndCosts(){
+        const response = await instances.get(`${this.controller}/GetForecastedMonthEndCosts`)
+        return response
+    }
+    async GetForecastedCosts(startDate, endDate){
+        const response = await instances.get(`${this.controller}/GetForecastedCosts?startDate=${startDate}&endDate=${endDate}`)
+        return response
+    }
 }
 
 export default new AwsCostExplorerService();

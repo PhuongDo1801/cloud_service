@@ -30,6 +30,10 @@ class UserService extends BaseService {
         );
         return response.data;
     }
+    async getUserByEmail(email){
+        const response = await instances.get(`${this.controller}/GetByEmail?email=${email}`)
+        return response
+    }
 }
 
 export default new UserService();
