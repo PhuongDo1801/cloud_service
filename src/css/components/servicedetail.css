@@ -1,0 +1,118 @@
+.container__right-popup {
+    width: 50%;
+    height: auto;
+    background-color: #ffffff;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 200 !important;
+    padding: 24px 24px 12px 24px;
+    border: 1px solid gray;
+    border-radius: 4px;
+  }
+  .container__right-icon-wraper {
+    display: flex;
+    align-items: center;
+    position: absolute;
+    right: 0;
+    top: 0;
+    padding: 24px;
+  }
+  .container__right-popup-top {
+    display: flex;
+    width: 100%;
+    /* height: 45px; */
+    align-items: center;
+  }
+  .container__right-popup-top span {
+    font-size: 24px;
+    font-weight: 500;
+  }
+  .container__right-popup-top div {
+    display: flex;
+    align-items: center;
+  }
+  .container__right-popup-top div input {
+    display: flex;
+    margin-left: 20px;
+    width: 16px;
+    height: 16px;
+    margin-right: 12px;
+  }
+  .container__right-popup-body {
+    width: auto;
+    height: auto;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    margin-top: 16px;
+  }
+  .container__right-popup-body label {
+      font-size: 14px;
+    font-weight: 500;
+  }
+  .input-box {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 32px;
+      margin-bottom: 16px;
+    }
+    .input-box label {
+      font-weight: 500;
+      width: 25%;
+    }
+    
+    .input-box input {
+      width: 70%;
+      height: 100%;
+      /* background: transparent; */
+      /* border: none; */
+      outline: none;
+      border-radius: 4px;
+      /* border: 2px solid rgba(255, 255, 255, .2); */
+      /* color: #FFF; */
+      padding-left: 12px;
+    }
+  .container__popup-footer {
+    width: 100%;
+    display: flex;
+    height: 36px;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .container__popup-footer .btn-close{
+      min-width: 80px;
+      height: 32px;
+      border-radius: 4px;
+      background-color: #fff;
+      outline: none;
+      border: 1px solid #e0e0e0;
+      cursor: pointer;
+  }
+  .container__popup-footer .btn-close:hover {
+      background-color:  #EBEBEB;;
+  }
+  
+  .container__popup-footer .btn-save{
+      min-width: 80px;
+      height: 32px;
+      border-radius: 4px;
+      padding: 0 12px;
+      outline: none;
+      border: none;
+      background-color: #50B83C;
+      color: #fff;
+      cursor: pointer;
+  }
+  /* #4acf2f */
+  /* #067933 */
+  .container__popup-footer .btn-save:hover {
+      background-color: #4acf2f;
+  }
+  .container__popup-footer .btn-save:focus {
+      background-color: #067933;
+  }

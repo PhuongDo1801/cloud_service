@@ -20,7 +20,7 @@
                 <div class="option__icon overview-icon"></div>
                 <div class="option__content">Tổng quan</div>
             </router-link>
-            <router-link to="/userservice" class="option" v-if="isUser">
+            <router-link to="/awsservice" class="option" v-if="isUser">
                 <div class="option__icon deposits-icon"></div>
                 <div class="option__content">Dịch vụ người dùng</div>
             </router-link>

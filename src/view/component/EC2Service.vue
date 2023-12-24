@@ -82,7 +82,7 @@
 import { instancesTableColumn } from "@/constains/instancesTableColumn";
 import EC2Service from "@/services/EC2Service";
 export default {
-    name: 'ServicePage',
+    name: 'EC2ServicePage',
     data() {
         return {
             instances: [],

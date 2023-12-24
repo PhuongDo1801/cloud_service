@@ -89,7 +89,7 @@ export default {
   align-items: center;
   min-height: 100vh;
   /* background-image: url(../../assets/img/yn.jpg); */
-  background-image: url(../../assets/img/DHBK.jpg);
+  background-image: url(../../assets/img/bgc_cloud.jpg);
   background-size: cover;
   background-position: center;
 }

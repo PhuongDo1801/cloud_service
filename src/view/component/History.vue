@@ -101,7 +101,7 @@ export default {
                 const costData = await AwsCostExplorerService.GetSixMonthCost();
                 const data = costData.data
                 // Chuyển định dạng dữ liệu từ costData để cập nhật vào biểu đồ
-                this.chartSeries[0].data = data.map(entry => entry.TotalCost);
+                this.chartSeries[0].data = data.map(entry => entry.TotalCost.toFixed(2));
                 const chartCategories = data.map(entry => {
                     // Định dạng lại ngày tháng ở đây, ví dụ: July, 2023
                     return format(new Date(entry.TimePeriod.Start), 'MMMM, yyyy');
@@ -199,7 +199,7 @@ export default {
                 const data = res.data;
                 console.log(data);
                 this.chartSeries[0].data = [];
-                this.chartSeries[0].data = data.map(entry => entry.TotalCost);
+                this.chartSeries[0].data = data.map(entry => entry.TotalCost.toFixed(2));
                 const chartCategories = data.map(entry => {
                     // Định dạng lại ngày tháng ở đây, ví dụ: July, 2023
                     return format(new Date(entry.TimePeriod.Start), 'MMMM, yyyy');

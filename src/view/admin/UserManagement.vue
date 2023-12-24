@@ -124,7 +124,7 @@ export default {
             users: [],
             tableColumn,
             pagings,
-            currentPageSize: 20,
+            currentPageSize: 10,
             textSearch: "",
             page: 1,
             //limit: 10,

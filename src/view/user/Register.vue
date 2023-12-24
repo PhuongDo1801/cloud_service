@@ -43,7 +43,6 @@ export default {
   },
   methods: {
     async register() {
-      // Đoạn mã xử lý đăng ký ở đây
       try {
         this.user.Role = "user"
         const res = await userService.Register(this.user)
@@ -53,8 +52,6 @@ export default {
       catch (error) {
         console.log(error);
       }
-      // Trong ứng dụng thực tế, bạn có thể gửi yêu cầu đăng ký đến server,
-      // xử lý xác minh và chuyển hướng sau khi đăng ký thành công.
     }
   }
 }
@@ -66,7 +63,7 @@ export default {
   align-items: center;
   min-height: 100vh;
   /* background-image: url(../../assets/img/yn.jpg); */
-  background-image: url(../../assets/img/DHBK.jpg);
+  background-image: url(../../assets/img/bgc_cloud.jpg);
   background-size: cover;
   background-position: center;
 }
@@ -112,6 +109,10 @@ export default {
   transform: translateY(-50%);
   font-size: 20px;
 }
+.input-box input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+
 .wrapper .btn {
   width: 100%;
   height: 32px;

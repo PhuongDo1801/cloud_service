@@ -3,9 +3,9 @@ import LoginPage from "@/view/user/Login";
 import RegisterPage from "@/view/user/Register";
 import DashboardPage from "@/view/Dashboard"
 import HistoryPage from "@/view/component/History" 
-import ServicePage from "@/view/component/Service"
+import EC2ServicePage from "@/view/component/EC2Service"
 import PricingPage from "@/view/component/Pricing"
-import UserService from "@/view/component/UserService"
+import AWSService from "@/view/component/AWSService"
 import UserManagement from "@/view/admin/UserManagement"
 import ServiceManagement from "@/view/admin/ServiceManagement"
 import HomePage from "@/view/component/Home"
@@ -19,9 +19,9 @@ const routers = [
     children: [
       { path: '/home', component: HomePage, },
       { path: '/history', component: HistoryPage, },
-      { path: '/service', component: ServicePage, },
+      { path: '/service', component: EC2ServicePage, },
       { path: '/pricing', component: PricingPage, },
-      { path: '/userservice', component: UserService, },
+      { path: '/awsservice', component: AWSService, },
       { path: '/usermanage', component: UserManagement,},
       { path: '/servicemanage', component: ServiceManagement,},
       { path: '/profile', component: UserProfile,}
