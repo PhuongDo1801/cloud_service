@@ -15,7 +15,7 @@ class AwsCostExplorerService {
         return response
     }
     async GetHistoryCost(startDate, endDate){
-        const response = await instances.get(`${this.controller}/history-cost-data?startDate=${startDate}&endDate=${endDate}`)
+        const response = await instances.post(`${this.controller}/history-cost-data?startDate=${startDate}&endDate=${endDate}`)
         return response
     }
     async GetForecastedMonthEndCosts(){
@@ -23,7 +23,7 @@ class AwsCostExplorerService {
         return response
     }
     async GetForecastedCosts(startDate, endDate){
-        const response = await instances.get(`${this.controller}/GetForecastedCosts?startDate=${startDate}&endDate=${endDate}`)
+        const response = await instances.post(`${this.controller}/GetForecastedCosts?startDate=${startDate}&endDate=${endDate}`)
         return response
     }
 }

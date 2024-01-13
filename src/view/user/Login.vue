@@ -34,7 +34,8 @@
 </template>
   
 <script>
-import userService from '@/services/userService';
+import AuthService from '@/services/AuthService';
+// import userService from '@/services/userService';
 export default {
   name: "LoginPage",
   data() {
@@ -46,11 +47,11 @@ export default {
   methods: {
     async login() {
       try {
-        const res = await userService.Login(this.user);
+        const res = await AuthService.Login(this.user);
         console.log(res)
         if (res.status == 200) {
           // Gọi API GetInfoUser để lấy thông tin người dùng
-          const userInfoResponse = await userService.GetInfoUser();
+          const userInfoResponse = await AuthService.GetInfoUser();
 
           // Lưu vai trò vào localStorage
           localStorage.setItem('email', userInfoResponse.data.Email);

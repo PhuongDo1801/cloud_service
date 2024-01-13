@@ -20,17 +20,21 @@
                 <div class="option__icon overview-icon"></div>
                 <div class="option__content">Tổng quan</div>
             </router-link>
-            <router-link to="/awsservice" class="option" v-if="isUser">
-                <div class="option__icon deposits-icon"></div>
-                <div class="option__content">Dịch vụ người dùng</div>
-            </router-link>
-            <router-link to="/service" class="option" v-if="isUser">
-                <div class="option__icon cash-icon"></div>
-                <div class="option__content">EC2</div>
-            </router-link>
             <router-link to="/history" class="option" v-if="isUser">
                 <div class="option__icon history-icon"></div>
                 <div class="option__content">Lịch sử sử dụng</div>
+            </router-link>
+            <router-link to="/awsservice" class="option" v-if="isUser">
+                <div class="option__icon deposits-icon"></div>
+                <div class="option__content">Dịch vụ AWS</div>
+            </router-link>
+            <router-link to="/service" class="option" v-if="isUser">
+                <div class="option__icon cash-icon"></div>
+                <div class="option__content">Quản lý dịch vụ</div>
+            </router-link>
+            <router-link to="/budgets" class="option" v-if="isUser">
+                <div class="option__icon budget-icon"></div>
+                <div class="option__content">Quản lý ngân sách</div>
             </router-link>
             <!-- <router-link to="/pricing" class="option" v-if="isUser">
                 <div class="option__icon search-service-icon"></div>

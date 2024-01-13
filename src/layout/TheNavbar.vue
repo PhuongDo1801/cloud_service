@@ -2,7 +2,7 @@
   <div class="container__right-navbar">
     <div class="container__right-navbar-left">
       <i class="menu-icon"></i>
-      <span>HUST</span>
+      <span>CloudHUST</span>
       <!-- <img src="../assets/icon/dropdown.png" alt="" /> -->
       <!-- <div class="dropdown-gray-d-icon"></div> -->
     </div>
