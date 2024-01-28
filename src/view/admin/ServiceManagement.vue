@@ -130,7 +130,7 @@ export default {
             serviceTableColumn,
             pagings,
             serviceCodeRequest: "",
-            providerId: "39426227-3f9f-458b-aea3-3ee233054c6c",
+            providerId: "2082ec9c-3333-4f95-91f4-65a9d61a50ae",
             currentPageSize: 10,
             textSearch: "",
             page: 1,

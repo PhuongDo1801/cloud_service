@@ -1,10 +1,21 @@
 <template>
+     <!-- Overlay -->
+     <div v-if="isOverlayVisible" class="overlay"></div>
+    <BudgetCreate
+      v-if="isShowCreateBudgetForm"
+      @submit="submitCreateBudgetForm"
+      @close="closeCreateBudgetForm"
+    ></BudgetCreate>
+     <BudgetInfo v-if="isShowDetail"
+    :selected-instance="selectedInstance"
+    @close-popup="closeBudgetDetailPopup"
+    ></BudgetInfo>
     <div v-show="isLoading" class="background--loading">
         <div class="icon--loading"></div>
     </div>
     <div class="budget-page-title">
         <span>Quản lý ngân sách</span>
-        <button class="btn btn-add-budget">Tạo kế hoạch</button>
+        <button class="btn btn-add-budget" @click="OpenCreateForm">Tạo kế hoạch</button>
     </div>
     <div class="budget-page">
         <div class="budget-table">
@@ -27,10 +38,11 @@
                         </td>
                         <td class="text-align-left">{{ item.BudgetName }}</td>
                         <td class="text-align-left">{{ item.BudgetLimit }}</td>
-                        <td class="text-align-left">{{ item.Threshold }}</td>
-                        <td class="text-align-left">{{ item.StartTime }}</td>
-                        <td class="text-align-left">{{ item.EndTime }}</td>
+                        <td class="text-align-left">{{ item.Threshold }} %</td>
+                        <td class="text-align-left">{{ formatDateWithDash(item.StartTime) }}</td>
+                        <td class="text-align-left">{{ formatDateWithDash(item.EndTime) }}</td>
                         <td class="text-align-center">
+                            <button class="btn btn-delete" @click="deleteBudget(item)">Xoá</button>
                         </td>
                     </tr>
                 </tbody>
@@ -40,17 +52,25 @@
 </template>
 
 <script>
+import BudgetCreate from "@/view/component/budgets/BudgetCreate.vue"
+import { formatDateWithDash } from '@/utils/formatDate';
+import BudgetInfo from "@/view/component/budgets/BudgetInfo.vue"
 import { budgetTableColumn } from "@/constains/budgetTableColumn";
 import budgetService from "@/services/budgetService";
 export default {
     name: 'BudgetPage',
+    components: {
+        BudgetInfo, BudgetCreate
+    },
     data() {
         return {
             budgets: [],
             budgetTableColumn,
-            showDetail: false,
+            isShowDetail: false,
             selectedInstance: null,
             isLoading: false,
+            isShowCreateBudgetForm: false,
+            isOverlayVisible: false,
         }
     },
     created() {
@@ -60,6 +80,7 @@ export default {
 
     },
     methods: {
+        formatDateWithDash,
         async getBudgetsList() {
             try {
                 this.isLoading = true;
@@ -73,6 +94,46 @@ export default {
                 console.log(error);
             }
         },
+
+        showBudgetDetail(budget){
+            this.selectedInstance = budget;
+            this.isShowDetail = true;
+        },
+        closeBudgetDetailPopup(){
+            this.isShowDetail = false;
+            this.selectedInstance = null;
+        },
+        async deleteBudget(item){
+            try{
+                const res = await budgetService.deleteBudget(item.BudgetName);
+                if(res.status == 200){
+                    this.getBudgetsList();
+                }
+            }
+            catch(error){
+                console.log(error);
+            }
+        },
+        OpenCreateForm(){
+            this.isOverlayVisible = true;
+            this.isShowCreateBudgetForm = true;
+        },
+        closeCreateBudgetForm(){
+            this.isOverlayVisible = false;
+            this.isShowCreateBudgetForm = false;
+        },
+        async submitCreateBudgetForm(createBudgetFormData){
+            try{
+                const res = await budgetService.createBudget(createBudgetFormData);
+                console.log(res);
+                if(res.status == 200){
+                    this.getBudgetsList();
+                }
+            }
+            catch(error){
+                console.log(error);
+            }
+        }
     }
 }
 </script>
@@ -114,4 +175,29 @@ export default {
     text-decoration: none;
     display: block;
     cursor: pointer;
-}</style>
+}
+.btn-add-budget {
+    min-width: 80px;
+    height: 32px;
+    padding: 0 12px;
+}
+.btn-delete {
+    background-color: red;
+    min-width: 80px;
+    height: 24px;
+    border: none;
+    outline: none;
+    border-radius: 4px;
+    color: #ffffff;
+    cursor: pointer;
+}
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* Một màu đen đục với độ trong suốt */
+  z-index: 99; /* Đặt z-index cao hơn để nằm phía trên cùng */
+}
+</style>

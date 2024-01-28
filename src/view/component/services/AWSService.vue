@@ -245,4 +245,7 @@ export default {
     background-color: #fff;
     padding: auto;
 }
+#table-service-list {
+    margin: auto;
+}
 </style>

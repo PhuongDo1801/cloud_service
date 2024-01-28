@@ -121,6 +121,7 @@ export default {
                 this.calculateTotalCost();
                 this.isLoading = false;
             } catch (error) {
+                this.isLoading = false;
                 console.error(error);
             }
         },
@@ -135,11 +136,17 @@ export default {
             this.totalCost = totalCost.toFixed(2);
         },
         async GetForecastedMonthEndCosts() {
-            const res = await AwsCostExplorerService.GetForecastedMonthEndCosts();
+            try {
+                const res = await AwsCostExplorerService.GetForecastedMonthEndCosts();
             console.log(res);
             const meanValue = parseFloat(res.data[0].MeanValue).toFixed(2);
 
             this.predictedCost = meanValue;
+            }
+            catch(error){
+                console.log(error);
+            }
+            
         },
         async forecastCost() {
             try {

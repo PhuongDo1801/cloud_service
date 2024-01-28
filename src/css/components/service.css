@@ -17,6 +17,11 @@
   overflow: auto;
   position: relative;
 }
+.ec2-page table {
+  margin: auto;
+  border-left: 1px solid #eeeeee;
+  border-right: 1px solid #eeeeee;
+}
 .ec2-table th,
 td {
   border-right: 1px solid #eeeeee;
