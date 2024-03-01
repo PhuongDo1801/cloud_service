@@ -1,5 +1,9 @@
 # cloud_service
 
+## Graduation thesis (Do an tot nghiep)
+Teck stack: VueJS, ASP.NET Core
+Description: Web application to track and manage costs using cloud services (AWS)
+
 ## Project setup
 ```
 npm install
