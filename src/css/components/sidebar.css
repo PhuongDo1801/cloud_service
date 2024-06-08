@@ -86,3 +86,29 @@
     color: #FFFFFF !important;
     background-color: #424242;
   }
+  .dropdown {
+    position: relative;
+  }
+  
+  .dropdown-menu {
+    /* margin-top: 10px; */
+    /* background: white; */
+    /* border: 1px solid #ccc; */
+  }
+  
+  .dropdown-white-icon {
+      margin-left: 10px
+  }
+  .dropdown-item {
+    display: block;
+    display: flex;
+    align-items: center;
+    padding-left: 50px;
+    text-decoration: none;
+    color: #fff;
+  }
+  
+  .dropdown-item:hover {
+    background-color: #616161;
+    color: #fff;
+  }

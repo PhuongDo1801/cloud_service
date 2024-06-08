@@ -4,7 +4,7 @@
     </div>
     <div class="ec2-page-title">
         <span>Your EC2</span>
-        <button class="btn">Tra cứu chi phí EC2 instances</button>
+        <button class="btn">Lịch sử thao tác</button>
     </div>
     <div class="ec2-page">
         <div class="ec2-table">
@@ -150,7 +150,7 @@ export default {
 }
 </script>
 <style scoped>
-@import url("../../css/components/service.css");
+@import url("../../../css/components/ec2service.css");
 
 .ec2-page-title {
     width: 100%;
@@ -161,6 +161,7 @@ export default {
     justify-content: space-between;
 }
 .ec2-page-title .btn {
+    padding: 0 12px;
     height: 32px;
     min-width: 80px;
     border-radius: 3px;

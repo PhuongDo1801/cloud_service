@@ -157,7 +157,12 @@
   transform: rotate(180deg);
 }
 
-
+.dropdown-white-icon {
+  background: url('../../assets/icon/sprite/Sprites.64af8f61.svg') no-repeat -1372px -361px;
+	width: 12px;
+	height: 14px;
+  transform: rotate(270deg);
+}
 .info-icon {
   background: url("../../assets/icon/sprite/Sprites.64af8f61.svg") no-repeat -732px -31px;
   width: 22px;

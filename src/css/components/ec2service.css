@@ -4,6 +4,37 @@
   position: relative;
   padding: 24px;
 }
+.ec2-page-title {
+  width: 100%;
+  height: 68px;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.ec2-page-title .btn {
+  padding: 0 12px;
+  height: 32px;
+  min-width: 80px;
+  border-radius: 3px;
+  cursor: pointer;
+  color: #FFFFFF;
+  border: none;
+  background-color: #50B83C
+}
+.ec2-page-title .btn:hover {
+  background-color: #4acf2f;
+}
+
+.ec2-page-title .btn:focus {
+  background-color: #067933;
+}
+.ec2-page-title span {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1f1f1f;
+}
+
 .ec2-table {
   border-left: 1px solid #eeeeee;
   border-right: 1px solid #eeeeee;
