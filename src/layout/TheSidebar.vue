@@ -46,7 +46,7 @@
                         :to="`/service/${service.ServiceName.toLowerCase()}`" class="dropdown-item option">
                         {{ service.ServiceName }}
                     </router-link>
-                    <router-link to="/service/activitilog" class="dropdown-item option">Lịch sử thao tác</router-link>
+                    <router-link to="/service/activitylog" class="dropdown-item option">Lịch sử thao tác</router-link>
                 </div>
             </div>
             <router-link to="/budgets" class="option" v-if="isUser">
@@ -57,10 +57,11 @@
                 <div class="option__icon userprofile-icon"></div>
                 <div class="option__content">Thông tin cá nhân</div>
             </router-link>
-            <router-link to="/login" class="option">
+            <router-link to="/login" class="option" @click="logout">
                 <div class="option__icon logout-icon"></div>
                 <div class="option__content">Logout</div>
             </router-link>
+            
         </div>
     </div>
 </template>
@@ -104,6 +105,12 @@ export default {
             } catch (error) {
                 console.error('Error fetching services:', error);
             }
+        },
+        logout() {
+        // Xoá dữ liệu trong localStorage
+        localStorage.clear();
+        // Chuyển hướng đến trang login
+        this.$router.push('/login');
         },
     },
     created() {

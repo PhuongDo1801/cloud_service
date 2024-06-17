@@ -6,4 +6,5 @@ export const RdsInstances = [
     { key: 'Endpoint', class: 'text-align-left', style: 'min-width: 100px;', text: 'Endpoint', title:"" },
     { key: 'Port', class: 'text-align-center', style: 'min-width: 150px;', text: 'Port', title:"" },
     { key: 'AvailabilityZone', class: 'text-align-center', style: 'min-width: 150px;', text: 'AvailabilityZone', title:"" },
+    { key: 'Option', class: 'text-align-center', style: 'min-width: 150px;', text: 'Option', title:"" },
   ];

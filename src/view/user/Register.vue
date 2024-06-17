@@ -3,37 +3,56 @@
   <div class="register-container">
     <div class="wrapper">
       <h1>Register</h1>
-      <div class="register-form">
-        <div class="input-box">
-          <input type="text" placeholder="Username" v-model="user.UserName" required>
+      <form class="register-form" @submit.prevent="register">
+        <div class="user-box">
+            <div class="infor-box">
+              <div class="input-box">
+                <input type="text" placeholder="Username" v-model="user.UserName" required>
+              </div>
+              <div class="input-box">
+                <input type="email" placeholder="Email" v-model="user.Email" required>
+              </div>
+              <div class="input-box">
+                <input type="password" placeholder="Password" v-model="user.Password" required>
+              </div>
+              <div class="input-box">
+                <input type="text" placeholder="CCCD" v-model="user.IdentityNumber" required>
+              </div>
+              <div class="input-box">
+                <input type="text" placeholder="PhoneNumber" v-model="user.PhoneNumber" required>
+              </div>
+              <div class="input-box">
+                <input type="date" placeholder="DateOfBirth" v-model="user.DateOfBirth" required>
+              </div>     
+            </div>
+            <div class="key-box">
+                <div class="input-box">
+                  <input type="text" placeholder="AwsId" v-model="user.AwsId" required>
+                </div>
+                <div class="input-box">
+                  <input type="text" placeholder="SecretKey" v-model="user.SecretKey" required>
+                </div>
+                <div class="input-box">
+                  <input type="text" placeholder="AccessKey" v-model="user.AccessKey" required>
+                </div>
+                <div class="input-box">
+                  <a href="https://viblo.asia/p/aws-iam-identity-and-access-management-la-gi-1Je5EXz4lnL" target="_blank" style="color: #fff">Get keys guide</a>
+                </div>
+            </div>
         </div>
-        <div class="input-box">
-          <input type="email" placeholder="Email" v-model="user.Email" required>
-        </div>
-        <div class="input-box">
-          <input type="password" placeholder="Password" v-model="user.Password" required>
-        </div>
-        <div class="input-box">
-          <input type="text" placeholder="CCCD" v-model="user.IdentityNumber" required>
-        </div>
-        <div class="input-box">
-          <input type="text" placeholder="PhoneNumber" v-model="user.PhoneNumber" required>
-        </div>
-        <div class="input-box">
-          <input type="date" placeholder="PhoneNumber" v-model="user.DateOfBirth" required>
-        </div>
-        <button type="submit" class="btn" @click="register">Register</button>
-        <div class="login-link">
+        <button type="submit" class="btn">Register</button>
+        
+      </form>
+      <div class="login-link">
           <p>Already have an account? <router-link to="/login">Login</router-link></p>
         </div>
-      </div>
     </div>
 
   </div>
 </template>
   
 <script>
-import userService from '@/services/userService';
+import AuthService from '@/services/AuthService';
 export default {
   name: "RegisterPage",
   data() {
@@ -45,18 +64,26 @@ export default {
     async register() {
       try {
         this.user.Role = "user"
-        const res = await userService.Register(this.user)
+        const res = await AuthService.Register(this.user)
         console.log(res);
+        if(res.status == 200) alert("Đăng ký thành công")
         this.$router.push('/login');
       }
       catch (error) {
         console.log(error);
+        if(error.response.data.ErrorMsgs.Email) alert(error.response.data.ErrorMsgs.Email)
+        if(error.response.data.ErrorMsgs.DateOfBirth) alert(error.response.data.ErrorMsgs.DateOfBirth)
       }
     }
   }
 }
 </script>
 <style scoped>
+/* .register-form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center
+} */
 .register-container {
   display: flex;
   justify-content: center;
@@ -68,7 +95,7 @@ export default {
   background-position: center;
 }
 .wrapper {
-  width: 420px;
+  width: 50%;
   background: transparent;
   border: 2px solid rgba(255, 255, 255, .2);
   backdrop-filter: blur(20px);
@@ -76,6 +103,16 @@ export default {
   color: #FFF;
   border-radius: 10px;
   padding: 30px 40px;
+
+}
+.user-box {
+  width: 100%;
+}
+.infor-box {
+  width: 45%;
+}
+.key-box {
+  width: 45%;
 }
 .wrapper h1 {
   font-size: 36px;
@@ -116,6 +153,7 @@ export default {
 .wrapper .btn {
   width: 100%;
   height: 32px;
+  /* margin: auto; */
   background-color: #fff;
   border: none;
   outline: none;
@@ -140,6 +178,11 @@ export default {
 
 .login-link p a:hover {
   text-decoration: underline;
+}
+.user-box {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 </style>

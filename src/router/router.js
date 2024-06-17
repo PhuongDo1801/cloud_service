@@ -13,6 +13,7 @@ import UserProfile from "@/view/user/UserProfile"
 import RDSServicePage from "@/view/component/services/RDSService"
 // import LambdaServicePage from "@/view/component/service/LambdaService"
 import LambdaServicePage from "@/view/component/services/LambdaService"
+import LogHistory from "@/view/component/LogHistory"
 // Định nghĩa các routers
 const routers = [
     { path: '/', redirect: '/login' }, // Chuyển hướng từ trang gốc đến trang đăng nhập
@@ -23,6 +24,7 @@ const routers = [
       { path: '/home', component: HomePage, },
       { path: '/service/ec2', component: EC2ServicePage, },
       { path: '/service/rds', component: RDSServicePage, },
+      { path: '/service/activitylog', component: LogHistory, },
       { path: '/service/lambda', component: LambdaServicePage, },
       { path: '/budgets', component: BudgetPage, },
       { path: '/history', component: HistoryPage, },

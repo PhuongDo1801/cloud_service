@@ -32,18 +32,12 @@
                         <td class="text-align-left">{{ item.Handler }}</td>
                         <td class="text-align-left">{{ item.Timeout }}</td>
                         <td class="text-align-left">{{ item.MemorySize }}</td>
-                        <!-- <td class="text-align-left">{{ item.Port }}</td>
-                        <td class="text-align-left">{{ item.AvailabilityZone }}</td> -->
-                        <!-- <td class="text-align-center">
+                        <td class="text-align-center">
                             <div class="group-btn">
-                                <button class="btn btn-start" v-if="item.State === 'stopped'"
-                                    @click="startInstance(item.InstanceId)">Start</button>
-                                <button class="btn btn-stop" v-if="item.State === 'running'"
-                                    @click="stopInstance(item.InstanceId)">Stop</button>
-                                <button class="btn btn-reboot" v-if="['running', 'stopped'].includes(item.State)"
-                                    @click="rebootInstance(item.InstanceId)">Reboot</button>
+                                <button class="btn btn-delete"
+                                    @click="DeleteFunction(item.FunctionName)">Delete</button>
                             </div>
-                        </td> -->
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -68,6 +62,7 @@
 <script>
 import { LambdaInstances } from "@/constains/LambdaInstances";
 import LambdaService from "@/services/LambdaService";
+import ActivityLogService from "@/services/ActivityLogService";
 export default {
     name: 'LambdaServicePage',
     data() {
@@ -103,36 +98,47 @@ export default {
             this.showDetail = !this.showDetail; // Đảo ngược giá trị showDetail
             this.selectedInstance = this.showDetail ? item : null; // Gán selectedInstance nếu showDetail là true
         },
-        // async startInstance(item) {
-        //     try {
-        //         const res = await EC2Service.startInstance(item);
-        //         this.getInstancesList();
-        //         console.log(res.data);
-        //     }
-        //     catch (error) {
-        //         console.log(error);
-        //     }
-        // },
-        // async stopInstance(item) {
-        //     try {
-        //         const res = await EC2Service.stopInstance(item);
-        //         this.getInstancesList();
-        //         console.log(res.data);
-        //     }
-        //     catch (error) {
-        //         console.log(error);
-        //     }
-        // },
-        // async rebootInstance(item) {
-        //     try {
-        //         const res = await EC2Service.rebootInstance(item);
-        //         this.getInstancesList();
-        //         console.log(res.data);
-        //     }
-        //     catch (error) {
-        //         console.log(error);
-        //     }
-        // }
+        async DeleteFunction(functionName) {
+            try {
+                this.isLoading = true;
+                const res = await LambdaService.DeleteFunction(functionName);
+                console.log(res);
+                this.getInstancesList(); // Refresh the instances list
+                this.isLoading = false;
+                alert(res.data)
+                if (res.status == 200) {
+                    const userId = localStorage.getItem('userId');
+                // Ghi lại hoạt động vào cơ sở dữ liệu
+                    await ActivityLogService.insertLog({ 
+                    UserId: userId, // Thay 'userId' bằng id của người dùng thực hiện hoạt động này
+                    InstanceId: functionName,
+                    ServiceName: 'Lambda',
+                    ActivityDescription: 'Delete Function', // Mô tả hoạt động
+                    Result: 'Success', // Kết quả của hoạt động (có thể là 'Success' hoặc 'Failure' tùy thuộc vào trạng thái của phản hồi)
+                    });
+                }
+            } catch (error) {
+                this.isLoading = false;
+                console.log(error);
+                alert(error.response.data)
+                const userId = localStorage.getItem('userId');
+                // console.log(error);
+                try {
+                // Ghi log về lỗi vào cơ sở dữ liệu
+                await ActivityLogService.insertLog({ 
+                    UserId: userId, // Thay 'userId' bằng id của người dùng thực hiện hoạt động này
+                    InstanceId: functionName,
+                    ServiceName: 'Lambda',
+                    ActivityDescription: 'Stop DB', // Mô tả hoạt động
+                    Result: 'Failure', // Kết quả của hoạt động (có thể là 'Success' hoặc 'Failure' tùy thuộc vào trạng thái của phản hồi)
+                });
+                } catch (logError) {
+                    // Xử lý lỗi khi ghi log
+                    console.error('Error logging to activity log:', logError);
+                }
+            }
+        },
+
     }
 }
 </script>

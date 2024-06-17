@@ -18,7 +18,7 @@
             invalid:
               isError
           }" 
-           @input="resetError" placeholder="Password" v-model="user.Password" required>
+           @input="resetError" placeholder="Password" @keydown="handleEnter" v-model="user.Password" required>
         </div>
         <div class="remember-forgot">
           <label><input type="checkbox"> Remember me</label>
@@ -54,6 +54,7 @@ export default {
           const userInfoResponse = await AuthService.GetInfoUser();
 
           // Lưu vai trò vào localStorage
+          localStorage.setItem('userId', userInfoResponse.data.UserId);
           localStorage.setItem('email', userInfoResponse.data.Email);
           localStorage.setItem('role', userInfoResponse.data.Role);
           localStorage.setItem('username', userInfoResponse.data.UserName);
@@ -78,7 +79,12 @@ export default {
       } else {
         this.$router.push('/home');
       }
+    },
+    handleEnter(event) {
+    if (event.key === "Enter") {
+      this.login();
     }
+  }
   }
 }
 </script>

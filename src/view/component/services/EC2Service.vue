@@ -49,11 +49,11 @@
                         </td> -->
                         <td class="text-align-center">
                             <div class="group-btn">
-                                <button class="btn btn-start" v-if="item.State === 'stopped'"
+                                <button class="btn btn-start"
                                     @click="startInstance(item.InstanceId)">Start</button>
-                                <button class="btn btn-stop" v-if="item.State === 'running'"
+                                <button class="btn btn-stop"
                                     @click="stopInstance(item.InstanceId)">Stop</button>
-                                <button class="btn btn-reboot" v-if="['running', 'stopped'].includes(item.State)"
+                                <button class="btn btn-reboot"
                                     @click="rebootInstance(item.InstanceId)">Reboot</button>
                             </div>
                         </td>
@@ -81,6 +81,7 @@
 <script>
 import { instancesTableColumn } from "@/constains/instancesTableColumn";
 import EC2Service from "@/services/EC2Service";
+import ActivityLogService from "@/services/ActivityLogService";
 export default {
     name: 'EC2ServicePage',
     data() {
@@ -118,32 +119,120 @@ export default {
         },
         async startInstance(item) {
             try {
+                this.isLoading = true
                 const res = await EC2Service.startInstance(item);
                 this.getInstancesList();
                 console.log(res.data);
+                this.isLoading = false
+                alert(res.data)
+                if (res.status == 200) {
+                    const userId = localStorage.getItem('userId');
+                // Ghi lại hoạt động vào cơ sở dữ liệu
+                    await ActivityLogService.insertLog({ 
+                    UserId: userId, // Thay 'userId' bằng id của người dùng thực hiện hoạt động này
+                    InstanceId: item,
+                    ServiceName: 'EC2',
+                    ActivityDescription: 'Start Instance', // Mô tả hoạt động
+                    Result: 'Success', // Kết quả của hoạt động (có thể là 'Success' hoặc 'Failure' tùy thuộc vào trạng thái của phản hồi)
+                    });
+                }
             }
             catch (error) {
+                this.isLoading = false
+                const userId = localStorage.getItem('userId');
+                alert(error.response.data)
                 console.log(error);
+                try {
+                // Ghi log về lỗi vào cơ sở dữ liệu
+                await ActivityLogService.insertLog({ 
+                    UserId: userId, // Thay 'userId' bằng id của người dùng thực hiện hoạt động này
+                    InstanceId: item,
+                    ServiceName: 'EC2',
+                    ActivityDescription: 'Start Instance', // Mô tả hoạt động
+                    Result: 'Failure', // Kết quả của hoạt động (có thể là 'Success' hoặc 'Failure' tùy thuộc vào trạng thái của phản hồi)
+                });
+                } catch (logError) {
+                    // Xử lý lỗi khi ghi log
+                    console.error('Error logging to activity log:', logError);
+                }
             }
         },
         async stopInstance(item) {
             try {
+                this.isLoading = true
                 const res = await EC2Service.stopInstance(item);
                 this.getInstancesList();
                 console.log(res.data);
+                this.isLoading = false
+                alert(res.data)
+                if (res.status == 200) {
+                    const userId = localStorage.getItem('userId');
+                // Ghi lại hoạt động vào cơ sở dữ liệu
+                    await ActivityLogService.insertLog({ 
+                    UserId: userId, // Thay 'userId' bằng id của người dùng thực hiện hoạt động này
+                    InstanceId: item,
+                    ServiceName: 'EC2',
+                    ActivityDescription: 'Stop Instance', // Mô tả hoạt động
+                    Result: 'Success', // Kết quả của hoạt động (có thể là 'Success' hoặc 'Failure' tùy thuộc vào trạng thái của phản hồi)
+                    });
+                }
             }
             catch (error) {
+                this.isLoading = false
+                const userId = localStorage.getItem('userId');
                 console.log(error);
+                try {
+                // Ghi log về lỗi vào cơ sở dữ liệu
+                await ActivityLogService.insertLog({ 
+                    UserId: userId, // Thay 'userId' bằng id của người dùng thực hiện hoạt động này
+                    InstanceId: item,
+                    ServiceName: 'EC2',
+                    ActivityDescription: 'Stop Instance', // Mô tả hoạt động
+                    Result: 'Failure', // Kết quả của hoạt động (có thể là 'Success' hoặc 'Failure' tùy thuộc vào trạng thái của phản hồi)
+                });
+                } catch (logError) {
+                    // Xử lý lỗi khi ghi log
+                    console.error('Error logging to activity log:', logError);
+                }
             }
         },
         async rebootInstance(item) {
             try {
+                this.isLoading = true
                 const res = await EC2Service.rebootInstance(item);
                 this.getInstancesList();
                 console.log(res.data);
+                this.isLoading = false
+                alert(res.data);
+                if (res.status == 200) {
+                    const userId = localStorage.getItem('userId');
+                // Ghi lại hoạt động vào cơ sở dữ liệu
+                    await ActivityLogService.insertLog({ 
+                    UserId: userId, // Thay 'userId' bằng id của người dùng thực hiện hoạt động này
+                    InstanceId: item,
+                    ServiceName: 'EC2',
+                    ActivityDescription: 'Reboot Instance', // Mô tả hoạt động
+                    Result: 'Success', // Kết quả của hoạt động (có thể là 'Success' hoặc 'Failure' tùy thuộc vào trạng thái của phản hồi)
+                    });
+                }
             }
             catch (error) {
+                this.isLoading = false
+                const userId = localStorage.getItem('userId');
                 console.log(error);
+                try {
+                // Ghi log về lỗi vào cơ sở dữ liệu
+                await ActivityLogService.insertLog({ 
+                    UserId: userId, // Thay 'userId' bằng id của người dùng thực hiện hoạt động này
+                    InstanceId: item,
+                    ServiceName: 'EC2',
+                    ActivityDescription: 'Reboot Instance', // Mô tả hoạt động
+                    Result: 'Failure', // Kết quả của hoạt động (có thể là 'Success' hoặc 'Failure' tùy thuộc vào trạng thái của phản hồi)
+                });
+                } catch (logError) {
+                    // Xử lý lỗi khi ghi log
+                    console.error('Error logging to activity log:', logError);
+                }
             }
         }
     }

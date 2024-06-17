@@ -91,7 +91,7 @@
     margin-right: 100px;
   }
   .container__right-table {
-    width: auto;
+    width: 100%;
     /* padding: 0 12px; */
     height: auto;
     /* margin-left: 16px; */

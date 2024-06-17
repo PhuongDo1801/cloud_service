@@ -2,386 +2,159 @@
     <div v-show="isLoading" class="background--loading">
         <div class="icon--loading"></div>
     </div>
-    <div class="container__right-overlay" :style="{
-        display: isShowOverlay ? 'block' : 'none',
-    }"></div>
-    <div v-if="isDialogOverlayShow" class="dialog-overlay"></div>
-    <h-dialog v-if="isShowDialogDelete" :textDialog="textDialog" :handleCancelDelete="onCloseDialogService"
-        :handleAccept="deleteService" :handleCloseInputError="onCloseDialogService"
-        :isDialogDelete="isDialogDelete" :isDialogInputError="isDialogInputError">
-    </h-dialog>
-    <h-dialog v-if="isShowDialogChagneData" :textDialog="textDialog" :handleCancelDelete="onCloseDialogService"
-        :handleAccept="updateService" :handleDataChange="handleDataChange"
-        :isDialogDataChange="isDialogDataChange">
-    </h-dialog>
-    <h-toast :textMessage="textMessage" :isDone="isDone" v-if="isDone"></h-toast>
-    <ServiceDetail v-if="isShowDetail" @onCloseDialog="onCloseDialog" :serviceInput="serviceSelected"
-        :getServiceList="getServiceList" :isEdit="isEditService" :actionSuccess="actionSuccess" 
-        @onCloseDialogByIcon="onCloseDialogByIcon" 
-        :openAddForm="openAddForm"
-        ref="serviceDetail">
-    </ServiceDetail>
-    <div class="container__right-main-top">
-        <span>Danh sách dịch vụ</span>
-        <div class="add-service">
-            <input type="text" v-model="serviceCodeRequest">
-            <button id="btn-add-service" @click="AddService">Add service</button>
-        </div>  
+    <div class="ec2-page-title">
+        <span>Service Management</span>
+        <!-- <button class="btn" @click="goToActivityLog()">Lịch sử thao tác</button> -->
     </div>
-    <div class="container__right-main-body">
-        <div class="container__right-search">
-            <div class="search-input--right">
-                <div class="container__right-search-input">
-                    <input title="Tìm kiếm" 
-                    placeholder="Tìm kiếm" 
-                    v-model="textSearch" />
-                    <i class="search-icon" title="Tìm kiếm"></i>
-                </div>
-                <div class="refresh-icon" @click="refreshData"></div>
-            </div>
-        </div>
-        <div class="container__right-table">
-            <div class="container__table">
-                <table id="table-service-list">
+    <div class="ec2-page">
+        <div class="ec2-table">
+            <table>
                 <thead>
                     <tr>
-                        <!-- <th class="text-align-center" style="min-width: 50px;" type="checkbox">
-                            <input type="checkbox" @change="handleAllCheckboxChange"/>
-                        </th> -->
-                        <th v-for="column in serviceTableColumn" :key="column.key" :class="column.class" :style="column.style" :title="column.title">
+                        <th class="text-align-center" style="min-width: 50px;" type="checkbox">
+                            <input type="checkbox" />
+                        </th>
+                        <th v-for="column in serviceManagerColumn" :key="column.key" :class="column.class"
+                            :style="column.style" :title="column.title">
                             {{ column.text }}
                         </th>
                     </tr>
                 </thead>
-                <tbody class="table__body" v-if="services.length>0">
-                    <tr @dblclick="showServiceDetail(item)" v-for="(item, index) in services" :key="index">
-                        <!-- <td class="text-align-center" @dblclick.stop="">
-                            <input type="checkbox"/>                          
-                        </td> -->
-                        <td class="text-align-left">{{ item.ServiceName }}</td>
-                        <td class="text-align-left">{{ item.ServiceCode }}</td>
-                        <td class="text-align-left">{{ item.ProductFamily }}</td>
-                        <!-- <td class="text-align-left">{{ item.EngineCode }}</td> -->
-                        <td class="text-align-left">{{ item.UsageType }}</td>
-                        <td class="text-align-left">{{ item.LocationType }}</td>
-                        <!-- <td class="text-align-left">{{ item.InstanceFamily }}</td> -->
-                        <!-- <td class="text-align-left">{{ item.Operation }}</td> -->
-                        <!-- <td class="text-align-left">{{ item.DatabaseEngine }}</td> -->
+                <tbody class="table__body" v-if="instances.length > 0">
+                    <tr v-for="(item, index) in instances" :key="index">
                         <td class="text-align-center" @dblclick.stop="">
-                            <button class="btn btn-delete-service" @click="showDeleteServiceDialog((item.ServiceId))">
-                                Xoá
-                            </button>
+                            <input type="checkbox" :checked="showDetail" @change="handleCheckboxChange(item)">
+                        </td>
+                        <td class="text-align-center">{{ item.ServiceName }}</td>
+                        <td class="text-align-center">{{ item.Status }}</td>
+                        <td class="text-align-center">
+                            <div class="group-btn">
+                                <button class="btn btn-start" v-if="item.Status === 0"
+                                    @click="enableService(item)">Enable</button>
+                                <button class="btn btn-stop" v-if="item.Status === 1"
+                                    @click="disableService(item)">Disable</button>
+                            </div>
                         </td>
                     </tr>
                 </tbody>
-                </table>
-            </div>
-            <div class="container__right-main-footer">
-                <div class="container__right-main-footer-left">
-                    <span>
-                        Total:
-                        <strong>{{ this.totalService}}</strong>
-                    </span>
-                </div>
-
-                <div class="container__right-main-footer-right">
-                    <div class="container__footer-right-item-first">
-                        <span>Số bản ghi/trang: </span>
-                        <span>&nbsp; {{ this.currentPageSize }} &nbsp;</span>
-                        <div class="option-paging">
-                            <div class="dropdown-gray-d-icon" @click="handleShowPageList"></div>
-                            <ul v-show="isShowPaging" class="footer__pagesize-list" v-click-outside="ClickOutsidePaging"> 
-                                <li @click="handleChangeRowPage(item.value)" v-for="item in pagings" :key="item">
-                                    {{ item.value }}
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="container__footer-right-item-second">
-                        <span>{{ totalService > 0 ? ((this.page-1)*this.currentPageSize+1) : 0 }} </span>
-                        <span> - </span>
-                        <span>{{ record() }}</span>
-
-                        <span> &nbsp; bản ghi </span>
-                    </div>
-                    <div class="container__footer-right-item-third">
-                        <div @click="handleBackPage" :class="{'arrow-left-icon': !isDisableLeft, 'arrow-left-icon-disable': isDisableLeft}">
-                        </div>
-                        <div @click="handleNextPage" :class="{'arrow-right-icon': !isDisableRight, 'arrow-right-icon-disable': isDisableRight}">
-                        </div>
-                    </div>
-                </div>
-            </div>
+            </table>
         </div>
     </div>
 </template>
 
 <script>
-import AwsService from '@/services/AwsService';
-import { pagings } from '@/constains/paging';
-import { serviceTableColumn } from '@/constains/serviceTableColumn';
-import ServiceDetail from '@/view/admin/ServiceDetail.vue';
+import { serviceManagerColumn } from "@/constains/serviceManagerColumn";
+import ServiceManagerService from "@/services/ServiceManagerService";
+// import ActivityLogService from "@/services/ActivityLogService";
 export default {
-    name: "ServiceManagement",
-    components: { ServiceDetail },
-    data(){
+    name: 'ServiceManagement',
+    data() {
         return {
-            services: [],
-            serviceTableColumn,
-            pagings,
-            serviceCodeRequest: "",
-            providerId: "2082ec9c-3333-4f95-91f4-65a9d61a50ae",
-            currentPageSize: 10,
-            textSearch: "",
-            page: 1,
-            //limit: 10,
-            totalSizePage: 0,
-            totalService: null,
-            isDisableLeft: true,
-            isDisableRight: false,
+            instances: [],
+            serviceManagerColumn,
+            showDetail: false,
+            selectedInstance: null,
             isLoading: false,
-            idTimeOut: null,
-            isShowPaging: null,
-            isShowDialogDelete: false,
-            textDialog: [],
-            isDialogDelete: false,
-            isDialogInputError: false,
-            isDialogDataChange: false,
-            isDone: false,
-            textMessage: "",
-            isEditService: null,
-            idService: null,
-            serviceSelected: {},
-            isShowOverlay: false,
-            isDialogOverlayShow: false,
-            isShowDialogChagneData: false,
-            isShowDetail: false,
         }
     },
     created() {
-        this.getServiceList();
+        this.getInstancesList();
     },
-    watch: {
-        textSearch() {
-            if (this.idTimeOut !== null) {
-                clearTimeout(this.idTimeOut);
-            }
-            const id = setTimeout(() => {
-                this.searchService();
-            }, 600);
-            this.idTimeOut = id;
-        },
+    computed: {
+
     },
     methods: {
-        onCloseDialogService() {
-            //this.isShowOverlay = false;
-            if(this.isShowDialogDelete == true){
-                this.isShowDialogDelete = false;
-                this.isShowOverlay = false;
-            }
-            if(this.isShowDialogChagneData == true){
-                this.isShowDialogChagneData = false;
-                // this.isShowDetail = false;
-                this.isDialogOverlayShow = false;
-            }
-            if(this.isShowDialogDelMul == true){
-                this.isShowDialogDelMul = false;
-                this.isShowOverlay = false;
-            }
-            this.textDialog = [];
-        },
-        actionSuccess(text, isDone) {
-            this.textMessage = text;
-            this.isDone = isDone;
-            setTimeout(() => {
-                this.isDone = false;
-            }, 1800);
-        },
-        onCloseDialog() {
-            this.isShowDetail = false;
-            this.isShowOverlay = false;
-        },
-        onCloseDialogByIcon(){
-            this.isDialogDataChange = true;
-            this.isShowDialogChagneData = true;
-            this.isDialogOverlayShow = true;
-        },
-        async openAddForm() {
-            this.serviceSelected = {};
-            this.isShowDetail = true;
-            this.isShowOverlay = true;
-            this.isEditService = false;
-        },
-        handleDataChange(){
-            if(this.isShowDialogChagneData == true){
-                this.isShowDetail = false;
-                this.isShowDialogChagneData = false;
-                this.isDialogOverlayShow = false;
-                this.isShowOverlay = false;
-            }
-            this.textDialog = [];
-        },
-        showServiceDetail(service) {
-            this.isEditService = true;
-            this.serviceSelected = service;
-            this.isShowDetail = true;
-            this.isShowOverlay = true;
-        },
-        showDeleteServiceDialog(id) {
-            //this.Code = code;
-            this.isDialogDelete = true;
-            this.idService = id;
-            this.isShowOverlay = true;
-            this.isShowDialogDelete = true;
-        },
-        ClickOutsidePaging(){
-            this.isShowPaging = null;
-        },
-        refreshData(){
-            this.page = 1;
-            this.getServiceList();
-        },
-        record(){
-            if(this.page < this.totalSizePage){
-                return this.page*this.currentPageSize;
-            }
-            else{
-                return this.totalService;
-            }
-        },
-        async deleteService() {
-            try {
-                const res = await AwsService.delete(this.idService);
-                if (res.status === 200) {
-                    // this.isLoading = true;
-                    this.getServiceList();
-                    this.actionSuccess(
-                        "Xoá thành công",
-                        true
-                    );
-                    // this.isLoading = false;
-                    this.isShowDialogDelete = false;
-                    this.isShowOverlay = false;
-                }
-            }
-            catch (error) {
-                console.log(error);
-            }
-        },
-        updateService(){
-            this.$refs.serviceDetail.saveService();
-            this.isShowDialogChagneData = false;
-            this.isDialogOverlayShow = false;
-        },
-        async getServiceList() {
+        async getInstancesList() {
             try {
                 this.isLoading = true;
-                const res =  await AwsService.getList(this.textSearch, this.page, this.currentPageSize);
-                this.services = res.Data;
-                this.totalService = res.TotalRecord;
-                this.totalSizePage = Math.ceil(res.TotalRecord / this.currentPageSize);
-                this.isLoading = false;
+                const res = await ServiceManagerService.getList();
+                // console.log(res);
+                this.instances = res.data;
+                this.isLoading = false
             }
             catch (error) {
-                console.log(error);
                 this.isLoading = false;
-            }
-        },
-        async searchService() {
-            try {
-                this.page =  1;
-                const res = await AwsService.getList(this.textSearch, 1, this.currentPageSize);
-                this.totalService = res.TotalRecord;
-                this.totalSizePage = Math.ceil(res.TotalRecord / this.currentPageSize);
-                this.services = res.Data;
-                if(this.totalSizePage == 1){
-                    this.isDisableRight = true;
-                }
-                else{
-                    this.isDisableRight = false;
-                }  
-                this.isDisableLeft = true;
-            } catch (error) {
                 console.log(error);
             }
         },
-        async handleBackPage() {
+        handleCheckboxChange(item) {
+            this.showDetail = !this.showDetail; // Đảo ngược giá trị showDetail
+            this.selectedInstance = this.showDetail ? item : null; // Gán selectedInstance nếu showDetail là true
+        },
+        async enableService(item) {
             try {
-                if (this.page > 1) {
-                    this.page = this.page - 1;
-                    this.isDisableRight = false;
-                    if(this.page == 1){
-                        this.isDisableLeft = true;
-                    }
-                    else{
-                        this.isDisableLeft = false;
-                    }
-                    const res = await AwsService.getList(this.textSearch, this.page, this.currentPageSize);
-                    this.services = res.Data;
-                }
-            } catch (error) {
-                console.log(error)
-            }
-        },
-        /**
-        * Mô tả: trang phía sau
-        * created by : DDPHUONG
-        * created date: 17-06-2023 14:34:51
-        */
-        async handleNextPage() {
-            try {
-                if (this.page < this.totalSizePage) {
-                    this.page = this.page + 1;
-                    this.isDisableLeft = false;
-                    if(this.page == this.totalSizePage){
-                        this.isDisableRight = true;
-                    }
-                    else{
-                        this.isDisableRight = false;
-                    }
-                    const res = await AwsService.getList(this.textSearch, this.page, this.currentPageSize);
-                    this.services = res.Data;
-                }
-            } catch (error) {
-                console.log(error)
-            }
-        },
-        async handleChangeRowPage(value) {
-            this.currentPageSize = value;
-            this.page = 1;
-            this.getServiceList();
-            this.isShowPaging = false;
-            this.totalSizePage = Math.ceil(this.totalService / this.currentPageSize);
-            if(this.totalSizePage == 1){
-                this.isDisableRight = true;
-            }
-            else{
-                this.isDisableRight = false;
-            }
-            this.isDisableLeft = true;
-            //this.zIndex = value;
-        },
-        handleShowPageList() {
-            this.isShowPaging = !this.isShowPaging;
-        },
-        async AddService(){
-            try {
-                const res = await AwsService.InsertByServiceCode(this.serviceCodeRequest, this.providerId)
+                this.isLoading = true;
+                const data = { 
+                    // ServiceManagerId: item.ServiceManagerId,
+                    ServiceName: item.ServiceName,
+                    Status: 1 
+                };
+                const res = await ServiceManagerService.updateService(item.ServiceManagerId, data);
                 console.log(res);
-                if(res.status == 200){
-                    this.getServiceList();
-                    this.serviceCodeRequest = "";
-                }
-            }
-            catch(error){
+                this.getInstancesList();
+                this.isLoading = false;
+                alert('Service enabled successfully');
+            } catch (error) {
+                this.isLoading = false;
                 console.log(error);
+                alert('Failed to enable service');
             }
-            
+        },
+        async disableService(item) {
+            try {
+                this.isLoading = true;
+                const data = {
+                    ServiceManagerId: item.ServiceManagerId, 
+                    ServiceName: item.ServiceName,
+                    Status: 0 
+                };
+                const res = await ServiceManagerService.updateService(item.ServiceManagerId, data);
+                console.log(res)
+                this.getInstancesList();
+                this.isLoading = false;
+                alert('Service disabled successfully');
+            } catch (error) {
+                this.isLoading = false;
+                console.log(error);
+                alert('Failed to disable service');
+            }
         }
     }
 }
 </script>
-
 <style scoped>
-@import url(../../css/components/servicemanage.css);
-</style>
+@import url("../../css/components/ec2service.css");
+
+
+.running-state {
+    color: rgba(28, 217, 34, 0.911);
+}
+
+.showDetail {
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    padding: 16px;
+    margin-top: 16px;
+    border-radius: 4px;
+}
+
+.showDetail p {
+    margin: 8px 0;
+    font-size: 16px;
+    color: #333;
+}
+
+.table-list-option {
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 100;
+}
+
+.table-list-option li {
+    padding: 12px;
+    text-decoration: none;
+    display: block;
+    cursor: pointer;
+}</style>

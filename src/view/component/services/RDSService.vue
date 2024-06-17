@@ -3,8 +3,8 @@
         <div class="icon--loading"></div>
     </div>
     <div class="ec2-page-title">
-        <span>Your S3</span>
-        <button class="btn">Lịch sử thao tác</button>
+        <span>Your RDS</span>
+        <button class="btn" @click="goToActivityLog()">Lịch sử thao tác</button>
     </div>
     <div class="ec2-page">
         <div class="ec2-table">
@@ -34,40 +34,27 @@
                         <td class="text-align-left">{{ item.Endpoint }}</td>
                         <td class="text-align-left">{{ item.Port }}</td>
                         <td class="text-align-left">{{ item.AvailabilityZone }}</td>
-                        <!-- <td class="text-align-center">
+                        <td class="text-align-center">
                             <div class="group-btn">
-                                <button class="btn btn-start" v-if="item.State === 'stopped'"
-                                    @click="startInstance(item.InstanceId)">Start</button>
-                                <button class="btn btn-stop" v-if="item.State === 'running'"
-                                    @click="stopInstance(item.InstanceId)">Stop</button>
-                                <button class="btn btn-reboot" v-if="['running', 'stopped'].includes(item.State)"
-                                    @click="rebootInstance(item.InstanceId)">Reboot</button>
+                                <button class="btn btn-start"
+                                    @click="startInstance(item.DBInstanceIdentifier)">Start</button>
+                                <button class="btn btn-stop"
+                                    @click="stopInstance(item.DBInstanceIdentifier)">Stop</button>
+                                <button class="btn btn-reboot"
+                                    @click="rebootInstance(item.DBInstanceIdentifier)">Reboot</button>
                             </div>
-                        </td> -->
+                        </td>
                     </tr>
                 </tbody>
             </table>
         </div>
-        <!-- Thông tin 1 instanes -->
-        <!-- <div v-if="showDetail && selectedInstance !== null" class="showDetail">
-            <div>
-                <p>Instance ID: {{ selectedInstance.InstanceId }}</p>
-                <p>Instance Type: {{ selectedInstance.InstanceType }}</p>
-                <p>Availability Zone: {{ selectedInstance.Zone }}</p>
-                <p>Launch time: {{ selectedInstance.LaunchTime }}</p>
-                <p>vCpu: {{ selectedInstance.vCpu }}</p>
-                <p>Platform: {{ selectedInstance.Platform }}</p>
-                <p>State: {{ selectedInstance.State }}</p>
-                <p>PrivateIpAddress: {{ selectedInstance.PrivateIpAddress }}</p>
-                <p>PublicIpAddress: {{ selectedInstance.PublicIpAddress }}</p>
-            </div>
-        </div> -->
     </div>
 </template>
 
 <script>
 import { RdsInstances } from "@/constains/RdsInstances";
 import RDSService from "@/services/RDSService";
+import ActivityLogService from "@/services/ActivityLogService";
 export default {
     name: 'RDSServicePage',
     data() {
@@ -86,11 +73,14 @@ export default {
 
     },
     methods: {
+        goToActivityLog() {
+            this.$router.push('/service/activitylog');
+        },
         async getInstancesList() {
             try {
                 this.isLoading = true;
                 const res = await RDSService.getInstancesList();
-                console.log(res);
+                // console.log(res);
                 this.instances = res.data;
                 this.isLoading = false
             }
@@ -103,36 +93,124 @@ export default {
             this.showDetail = !this.showDetail; // Đảo ngược giá trị showDetail
             this.selectedInstance = this.showDetail ? item : null; // Gán selectedInstance nếu showDetail là true
         },
-        // async startInstance(item) {
-        //     try {
-        //         const res = await EC2Service.startInstance(item);
-        //         this.getInstancesList();
-        //         console.log(res.data);
-        //     }
-        //     catch (error) {
-        //         console.log(error);
-        //     }
-        // },
-        // async stopInstance(item) {
-        //     try {
-        //         const res = await EC2Service.stopInstance(item);
-        //         this.getInstancesList();
-        //         console.log(res.data);
-        //     }
-        //     catch (error) {
-        //         console.log(error);
-        //     }
-        // },
-        // async rebootInstance(item) {
-        //     try {
-        //         const res = await EC2Service.rebootInstance(item);
-        //         this.getInstancesList();
-        //         console.log(res.data);
-        //     }
-        //     catch (error) {
-        //         console.log(error);
-        //     }
-        // }
+        async startInstance(dbInstanceIdentifier) {
+            try {
+                this.isLoading = true;
+                const res = await RDSService.startRDSInstance(dbInstanceIdentifier);
+                // console.log(res);
+                
+                this.getInstancesList(); // Refresh the instances list
+                this.isLoading = false;
+                alert(res.data)
+                if (res.status == 200) {
+                    const userId = localStorage.getItem('userId');
+                // Ghi lại hoạt động vào cơ sở dữ liệu
+                    await ActivityLogService.insertLog({ 
+                    UserId: userId, // Thay 'userId' bằng id của người dùng thực hiện hoạt động này
+                    InstanceId: dbInstanceIdentifier,
+                    ServiceName: 'RDS',
+                    ActivityDescription: 'Start DB', // Mô tả hoạt động
+                    Result: 'Success', // Kết quả của hoạt động (có thể là 'Success' hoặc 'Failure' tùy thuộc vào trạng thái của phản hồi)
+                    });
+                }
+            } catch (error) {
+                this.isLoading = false;
+                alert(error.response.data)
+                const userId = localStorage.getItem('userId');
+                // console.log(error);
+                try {
+                // Ghi log về lỗi vào cơ sở dữ liệu
+                await ActivityLogService.insertLog({ 
+                    UserId: userId, // Thay 'userId' bằng id của người dùng thực hiện hoạt động này
+                    InstanceId: dbInstanceIdentifier,
+                    ServiceName: 'RDS',
+                    ActivityDescription: 'Start DB', // Mô tả hoạt động
+                    Result: 'Failure', // Kết quả của hoạt động (có thể là 'Success' hoặc 'Failure' tùy thuộc vào trạng thái của phản hồi)
+                });
+                } catch (logError) {
+                    // Xử lý lỗi khi ghi log
+                    console.error('Error logging to activity log:', logError);
+                }
+            }
+        },
+        async stopInstance(dbInstanceIdentifier) {
+            try {
+                this.isLoading = true;
+                const res = await RDSService.stopRDSInstance(dbInstanceIdentifier);
+                console.log(res);
+                this.getInstancesList(); // Refresh the instances list
+                this.isLoading = false;
+                alert(res.data)
+                if (res.status == 200) {
+                    const userId = localStorage.getItem('userId');
+                // Ghi lại hoạt động vào cơ sở dữ liệu
+                    await ActivityLogService.insertLog({ 
+                    UserId: userId, // Thay 'userId' bằng id của người dùng thực hiện hoạt động này
+                    InstanceId: dbInstanceIdentifier,
+                    ServiceName: 'RDS',
+                    ActivityDescription: 'Stop DB', // Mô tả hoạt động
+                    Result: 'Success', // Kết quả của hoạt động (có thể là 'Success' hoặc 'Failure' tùy thuộc vào trạng thái của phản hồi)
+                    });
+                }
+            } catch (error) {
+                const userId = localStorage.getItem('userId');
+                this.isLoading = false;
+                alert(error.response.data)
+                console.log(error);
+                try {
+                // Ghi log về lỗi vào cơ sở dữ liệu
+                await ActivityLogService.insertLog({ 
+                    UserId: userId, // Thay 'userId' bằng id của người dùng thực hiện hoạt động này
+                    InstanceId: dbInstanceIdentifier,
+                    ServiceName: 'RDS',
+                    ActivityDescription: 'Stop DB', // Mô tả hoạt động
+                    Result: 'Failure', // Kết quả của hoạt động (có thể là 'Success' hoặc 'Failure' tùy thuộc vào trạng thái của phản hồi)
+                });
+                } catch (logError) {
+                    // Xử lý lỗi khi ghi log
+                    console.error('Error logging to activity log:', logError);
+                }
+            }
+        },
+        async rebootInstance(dbInstanceIdentifier) {
+            try {
+                this.isLoading = true;
+                const res = await RDSService.rebootRDSInstance(dbInstanceIdentifier);
+                console.log(res);
+                this.getInstancesList();
+                this.isLoading = false;
+                alert(res.data)
+                if (res.status == 200) {
+                    const userId = localStorage.getItem('userId');
+                // Ghi lại hoạt động vào cơ sở dữ liệu
+                    await ActivityLogService.insertLog({ 
+                    UserId: userId, // Thay 'userId' bằng id của người dùng thực hiện hoạt động này
+                    InstanceId: dbInstanceIdentifier,
+                    ServiceName: 'RDS',
+                    ActivityDescription: 'Reboot DB', // Mô tả hoạt động
+                    Result: 'Success', // Kết quả của hoạt động (có thể là 'Success' hoặc 'Failure' tùy thuộc vào trạng thái của phản hồi)
+                    });
+                }
+            } catch (error) {
+                const userId = localStorage.getItem('userId');
+                this.isLoading = false;
+                alert(error.response.data)
+                // console.log(error);
+                try {
+                // Ghi log về lỗi vào cơ sở dữ liệu
+                await ActivityLogService.insertLog({ 
+                    UserId: userId, // Thay 'userId' bằng id của người dùng thực hiện hoạt động này
+                    InstanceId: dbInstanceIdentifier,
+                    ServiceName: 'RDS',
+                    ActivityDescription: 'Stop DB', // Mô tả hoạt động
+                    Result: 'Failure', // Kết quả của hoạt động (có thể là 'Success' hoặc 'Failure' tùy thuộc vào trạng thái của phản hồi)
+                });
+                } catch (logError) {
+                    // Xử lý lỗi khi ghi log
+                    console.error('Error logging to activity log:', logError);
+                }
+            }
+        }
     }
 }
 </script>

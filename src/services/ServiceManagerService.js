@@ -1,7 +1,7 @@
 import instances from "./axios";
 
 class ServiceManagerService {
-    controller = "ServiceManager    "
+    controller = "ServiceManager"
     async getList(){
         const res = await instances.get(`${this.controller}`);
         return res;

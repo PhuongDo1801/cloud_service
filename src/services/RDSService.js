@@ -6,18 +6,25 @@ class RDSService {
         const res = await instances.get(`${this.controller}/instances`)
         return res;
     }
-    // async startInstance(item){
-    //     const res = await instances.post(`${this.controller}/start?instanceId=${item}`)
-    //     return res
-    // }
-    // async stopInstance(item){
-    //     const res = await instances.post(`${this.controller}/stop?instanceId=${item}`)
-    //     return res
-    // }
-    // async rebootInstance(item){
-    //     const res = await instances.post(`${this.controller}/reboot?instanceId=${item}`)
-    //     return res
-    // }
+    async getInstanceDetails(dbInstanceIdentifier) {
+        const res = await instances.get(`${this.controller}/instance/${dbInstanceIdentifier}`);
+        return res;
+      }
+    
+      async startRDSInstance(dbInstanceIdentifier) {
+        const res = await instances.post(`${this.controller}/start`, dbInstanceIdentifier);
+        return res;
+      }
+    
+      async stopRDSInstance(dbInstanceIdentifier) {
+        const res = await instances.post(`${this.controller}/stop`, dbInstanceIdentifier);
+        return res;
+      }
+    
+      async rebootRDSInstance(dbInstanceIdentifier) {
+        const res = await instances.post(`${this.controller}/reboot`, dbInstanceIdentifier);
+        return res;
+      }
 
 }
 export default new RDSService();

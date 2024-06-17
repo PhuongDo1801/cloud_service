@@ -4,6 +4,7 @@ export const LambdaInstances = [
     { key: 'Handler', class: 'text-align-left', style: 'min-width: 150px;', text: 'Handler', title:"" },
     { key: 'Timeout', class: 'text-align-left', style: 'min-width: 150px;', text: 'Timeout', title:"" },
     { key: 'MemorySize', class: 'text-align-left', style: 'min-width: 100px;', text: 'MemorySize', title:"" },
+    { key: 'Option', class: 'text-align-center', style: 'min-width: 150px;', text: 'Option', title:"" },
     // { key: 'Port', class: 'text-align-center', style: 'min-width: 150px;', text: 'Port', title:"" },
     // { key: 'AvailabilityZone', class: 'text-align-center', style: 'min-width: 150px;', text: 'AvailabilityZone', title:"" },
   ];
