@@ -1,4 +1,14 @@
 <template>
+    <div>
+        <NotificationPopup 
+            :message="notificationMessage" 
+            :visible="notificationVisible" 
+            :title="notificationTitle" 
+            :type="notificationType"
+            @close="notificationVisible = false" 
+        />
+        <!-- Nội dung khác của trang -->
+    </div>
     <div v-show="isLoading" class="background--loading">
         <div class="icon--loading"></div>
     </div>
@@ -63,8 +73,12 @@
 import { LambdaInstances } from "@/constains/LambdaInstances";
 import LambdaService from "@/services/LambdaService";
 import ActivityLogService from "@/services/ActivityLogService";
+import NotificationPopup from "@/components/NotificationPopup.vue";
 export default {
     name: 'LambdaServicePage',
+    components: {
+        NotificationPopup
+    },
     data() {
         return {
             instances: [],
@@ -72,6 +86,10 @@ export default {
             showDetail: false,
             selectedInstance: null,
             isLoading: false,
+            notificationMessage: '',
+            notificationVisible: false,
+            notificationTitle: '',
+            notificationType: 'success'
         }
     },
     created() {
@@ -81,6 +99,12 @@ export default {
 
     },
     methods: {
+        showNotification(message, title, type) {
+            this.notificationMessage = message;
+            this.notificationTitle = title;
+            this.notificationType = type;
+            this.notificationVisible = true;
+        },
         async getInstancesList() {
             try {
                 this.isLoading = true;
@@ -105,7 +129,8 @@ export default {
                 console.log(res);
                 this.getInstancesList(); // Refresh the instances list
                 this.isLoading = false;
-                alert(res.data)
+                // alert(res.data)
+                this.showNotification(res.data, 'Thành công', 'success');
                 if (res.status == 200) {
                     const userId = localStorage.getItem('userId');
                 // Ghi lại hoạt động vào cơ sở dữ liệu
@@ -119,8 +144,9 @@ export default {
                 }
             } catch (error) {
                 this.isLoading = false;
-                console.log(error);
-                alert(error.response.data)
+                // console.log(error);
+                // alert(error.response.data)
+                this.showNotification(error.response.data, 'Lỗi', 'error');
                 const userId = localStorage.getItem('userId');
                 // console.log(error);
                 try {

@@ -1,4 +1,14 @@
 <template>
+    <div>
+        <NotificationPopup 
+            :message="notificationMessage" 
+            :visible="notificationVisible" 
+            :title="notificationTitle" 
+            :type="notificationType"
+            @close="notificationVisible = false" 
+        />
+        <!-- Nội dung khác của trang -->
+    </div>
     <div v-show="isLoading" class="background--loading">
         <div class="icon--loading"></div>
     </div>
@@ -55,8 +65,12 @@
 import { RdsInstances } from "@/constains/RdsInstances";
 import RDSService from "@/services/RDSService";
 import ActivityLogService from "@/services/ActivityLogService";
+import NotificationPopup from "@/components/NotificationPopup.vue";
 export default {
     name: 'RDSServicePage',
+    components: {
+        NotificationPopup
+    },
     data() {
         return {
             instances: [],
@@ -64,6 +78,10 @@ export default {
             showDetail: false,
             selectedInstance: null,
             isLoading: false,
+            notificationMessage: '',
+            notificationVisible: false,
+            notificationTitle: '',
+            notificationType: 'success' // hoặc 'error' tùy thuộc vào tình huống
         }
     },
     created() {
@@ -76,6 +94,13 @@ export default {
         goToActivityLog() {
             this.$router.push('/service/activitylog');
         },
+        showNotification(message, title, type) {
+            this.notificationMessage = message;
+            this.notificationTitle = title;
+            this.notificationType = type;
+            this.notificationVisible = true;
+        },
+
         async getInstancesList() {
             try {
                 this.isLoading = true;
@@ -101,7 +126,8 @@ export default {
                 
                 this.getInstancesList(); // Refresh the instances list
                 this.isLoading = false;
-                alert(res.data)
+                // alert(res.data)
+                this.showNotification(res.data, 'Thành công', 'success');
                 if (res.status == 200) {
                     const userId = localStorage.getItem('userId');
                 // Ghi lại hoạt động vào cơ sở dữ liệu
@@ -115,7 +141,9 @@ export default {
                 }
             } catch (error) {
                 this.isLoading = false;
-                alert(error.response.data)
+                // alert(error.response.data)
+                // this.showNotification(error.response.data);
+                this.showNotification(error.response.data, 'Lỗi', 'error');
                 const userId = localStorage.getItem('userId');
                 // console.log(error);
                 try {
@@ -140,7 +168,8 @@ export default {
                 console.log(res);
                 this.getInstancesList(); // Refresh the instances list
                 this.isLoading = false;
-                alert(res.data)
+                // alert(res.data)
+                this.showNotification(res.data, 'Thành công', 'success');
                 if (res.status == 200) {
                     const userId = localStorage.getItem('userId');
                 // Ghi lại hoạt động vào cơ sở dữ liệu
@@ -155,8 +184,10 @@ export default {
             } catch (error) {
                 const userId = localStorage.getItem('userId');
                 this.isLoading = false;
-                alert(error.response.data)
-                console.log(error);
+                // alert(error.response.data)
+                // console.log(error);
+                // this.showNotification(error.response.data);
+                this.showNotification(error.response.data, 'Lỗi', 'error');
                 try {
                 // Ghi log về lỗi vào cơ sở dữ liệu
                 await ActivityLogService.insertLog({ 
@@ -179,7 +210,8 @@ export default {
                 console.log(res);
                 this.getInstancesList();
                 this.isLoading = false;
-                alert(res.data)
+                // alert(res.data)
+                this.showNotification(res.data, 'Thành công', 'success');
                 if (res.status == 200) {
                     const userId = localStorage.getItem('userId');
                 // Ghi lại hoạt động vào cơ sở dữ liệu
@@ -194,8 +226,9 @@ export default {
             } catch (error) {
                 const userId = localStorage.getItem('userId');
                 this.isLoading = false;
-                alert(error.response.data)
+                // alert(error.response.data)
                 // console.log(error);
+                this.showNotification(error.response.data, 'Lỗi', 'error');
                 try {
                 // Ghi log về lỗi vào cơ sở dữ liệu
                 await ActivityLogService.insertLog({ 

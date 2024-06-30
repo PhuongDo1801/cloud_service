@@ -1,4 +1,14 @@
 <template>
+    <div>
+        <NotificationPopup 
+            :message="notificationMessage" 
+            :visible="notificationVisible" 
+            :title="notificationTitle" 
+            :type="notificationType"
+            @close="notificationVisible = false" 
+        />
+        <!-- Nội dung khác của trang -->
+    </div>
     <div v-show="isLoading" class="background--loading">
         <div class="icon--loading"></div>
     </div>
@@ -82,8 +92,12 @@
 import { instancesTableColumn } from "@/constains/instancesTableColumn";
 import EC2Service from "@/services/EC2Service";
 import ActivityLogService from "@/services/ActivityLogService";
+import NotificationPopup from "@/components/NotificationPopup.vue";
 export default {
     name: 'EC2ServicePage',
+    components: {
+        NotificationPopup
+    },
     data() {
         return {
             instances: [],
@@ -91,6 +105,10 @@ export default {
             showDetail: false,
             selectedInstance: null,
             isLoading: false,
+            notificationMessage: '',
+            notificationVisible: false,
+            notificationTitle: '',
+            notificationType: 'success'
         }
     },
     created() {
@@ -100,6 +118,12 @@ export default {
 
     },
     methods: {
+        showNotification(message, title, type) {
+            this.notificationMessage = message;
+            this.notificationTitle = title;
+            this.notificationType = type;
+            this.notificationVisible = true;
+        },
         async getInstancesList() {
             try {
                 this.isLoading = true;
@@ -122,9 +146,10 @@ export default {
                 this.isLoading = true
                 const res = await EC2Service.startInstance(item);
                 this.getInstancesList();
-                console.log(res.data);
+                // console.log(res.data);
                 this.isLoading = false
-                alert(res.data)
+                // alert(res.data)
+                this.showNotification(res.data, 'Thành công', 'success');
                 if (res.status == 200) {
                     const userId = localStorage.getItem('userId');
                 // Ghi lại hoạt động vào cơ sở dữ liệu
@@ -140,8 +165,10 @@ export default {
             catch (error) {
                 this.isLoading = false
                 const userId = localStorage.getItem('userId');
-                alert(error.response.data)
-                console.log(error);
+                // alert(error.response.data)
+                // console.log(error);
+                const errorMessage = error.response.data.split('. ').slice(0, 1).join('. ') + '.';
+                this.showNotification(errorMessage, 'Lỗi', 'error');
                 try {
                 // Ghi log về lỗi vào cơ sở dữ liệu
                 await ActivityLogService.insertLog({ 
@@ -162,9 +189,10 @@ export default {
                 this.isLoading = true
                 const res = await EC2Service.stopInstance(item);
                 this.getInstancesList();
-                console.log(res.data);
+                // console.log(res.data);
                 this.isLoading = false
-                alert(res.data)
+                // alert(res.data)
+                this.showNotification(res.data, 'Thành công', 'success');
                 if (res.status == 200) {
                     const userId = localStorage.getItem('userId');
                 // Ghi lại hoạt động vào cơ sở dữ liệu
@@ -180,7 +208,9 @@ export default {
             catch (error) {
                 this.isLoading = false
                 const userId = localStorage.getItem('userId');
-                console.log(error);
+                // alert(error.response.data)
+                // console.log(error);
+                this.showNotification(error.response.data, 'Lỗi', 'error');
                 try {
                 // Ghi log về lỗi vào cơ sở dữ liệu
                 await ActivityLogService.insertLog({ 
@@ -201,9 +231,10 @@ export default {
                 this.isLoading = true
                 const res = await EC2Service.rebootInstance(item);
                 this.getInstancesList();
-                console.log(res.data);
+                // console.log(res.data);
                 this.isLoading = false
-                alert(res.data);
+                // alert(res.data);
+                this.showNotification(res.data, 'Thành công', 'success');
                 if (res.status == 200) {
                     const userId = localStorage.getItem('userId');
                 // Ghi lại hoạt động vào cơ sở dữ liệu
@@ -219,7 +250,9 @@ export default {
             catch (error) {
                 this.isLoading = false
                 const userId = localStorage.getItem('userId');
-                console.log(error);
+                // alert(error.response.data)
+                // console.log(error);
+                this.showNotification(error.response.data, 'Lỗi', 'error');
                 try {
                 // Ghi log về lỗi vào cơ sở dữ liệu
                 await ActivityLogService.insertLog({ 
