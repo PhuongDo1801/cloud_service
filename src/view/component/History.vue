@@ -193,30 +193,85 @@ export default {
                 this.isLoading = false;
             }
         },
-        async SearchHistory(){
-            try {
+        // async SearchHistory(){
+        //     try {
+        //         const res = await AwsCostExplorerService.GetHistoryCost(this.startDate, this.endDate);
+        //         const data = res.data;
+        //         // console.log(data);
+        //         this.chartSeries[0].data = [];
+        //         this.chartSeries[0].data = data.map(entry => entry.TotalCost.toFixed(2));
+        //         const chartCategories = data.map(entry => {
+        //             // Định dạng lại ngày tháng ở đây, ví dụ: July, 2023
+        //             return format(new Date(entry.TimePeriod.Start), 'MMMM, yyyy');
+        //         });
+        //         this.chartOptions.xaxis.categories.length = 0;
+        //         for (let i = 0; i < chartCategories.length; i++) {
+        //             this.chartOptions.xaxis.categories.push(chartCategories[i]);
+        //         }
+        //         this.isLoading = false;
+        //         console.log(this.chartOptions.xaxis.categories);
+        //     }
+        //     catch(error)
+        //     {   
+        //         this.isLoading = false;
+        //         console.log(error);
+        //     }   
+        // },
+        async SearchHistory() {
+        try {
+            this.isLoading = true;
+
+            // Parse startDate và endDate để kiểm tra
+            const startDate = new Date(this.startDate);
+            const endDate = new Date(this.endDate);
+
+            if (startDate.getMonth() === endDate.getMonth() && startDate.getFullYear() === endDate.getFullYear()) {
+                // Nếu startDate và endDate nằm trong cùng một tháng/năm
+                const res = await AwsCostExplorerService.GetCostData(this.startDate, this.endDate);
+                const data = res.data;
+
+                // Xử lý và cập nhật dữ liệu cho chartSeries để hiển thị giá từng dịch vụ
+                // this.chartSeries = data.ResultsByTime[0].Groups.map(group => ({
+                //     name: group.Keys[0],
+                //     data: [parseFloat(group.Metrics.BlendedCost.Amount).toFixed(2)]
+                // }));
+
+                // Cập nhật xaxis categories
+                // this.chartOptions.xaxis.categories = this.chartSeries.map(series => series.name);
+                // this.chartOptions.xaxis.categories = data.ResultsByTime[0].Groups.map(group => group.Keys[0]);
+                // console.log(this.chartOptions.xaxis.categories)
+                // this.chartOptions.xaxis.categories = [format(new Date(data.ResultsByTime[0].TimePeriod.Start), 'MMMM, yyyy')];
+
+                // Cập nhật dữ liệu cho biểu đồ
+            this.chartSeries[0].data = data.ResultsByTime[0].Groups.map(group => parseFloat(group.Metrics.BlendedCost.Amount).toFixed(2));
+
+            // Cập nhật xaxis categories bằng tên các dịch vụ
+            this.chartOptions.xaxis.categories.length = 0; // Xóa hết các phần tử cũ
+            for (let i = 0; i < data.ResultsByTime[0].Groups.length; i++) {
+                this.chartOptions.xaxis.categories.push(data.ResultsByTime[0].Groups[i].Keys[0]);
+            }
+            } else {
+                // Nếu startDate và endDate không nằm trong cùng một tháng/năm
                 const res = await AwsCostExplorerService.GetHistoryCost(this.startDate, this.endDate);
                 const data = res.data;
-                console.log(data);
-                this.chartSeries[0].data = [];
+
+                // Cập nhật dữ liệu cho biểu đồ
                 this.chartSeries[0].data = data.map(entry => entry.TotalCost.toFixed(2));
                 const chartCategories = data.map(entry => {
-                    // Định dạng lại ngày tháng ở đây, ví dụ: July, 2023
                     return format(new Date(entry.TimePeriod.Start), 'MMMM, yyyy');
                 });
                 this.chartOptions.xaxis.categories.length = 0;
                 for (let i = 0; i < chartCategories.length; i++) {
                     this.chartOptions.xaxis.categories.push(chartCategories[i]);
                 }
-                this.isLoading = false;
-                console.log(this.chartOptions.xaxis.categories);
             }
-            catch(error)
-            {   
-                this.isLoading = false;
-                console.log(error);
-            }   
+
+            this.isLoading = false;
+        } catch (error) {
+            this.isLoading = false;
+            console.error('Error fetching cost data:', error);
         }
+    }
 
     },
 };

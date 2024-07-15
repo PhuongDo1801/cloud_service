@@ -14,7 +14,24 @@
     </div>
     <div class="ec2-page-title">
         <span>Your EC2</span>
-        <button class="btn">Lịch sử thao tác</button>
+        <button class="btn" @click="toggleForm">Tra cứu chi phí</button>
+    </div>
+    <div v-if="showForm" class="form-container">
+        <form @submit.prevent="fetchPriceForecast">
+            <label>Instance Type:</label>
+            <input v-model="formData.instanceType" required>
+            
+            <label>vCpu:</label>
+            <input v-model="formData.vCpu" required>
+
+            <label>Memory (GiB):</label>
+            <input v-model="formData.memory" type="number" step="0.01" required>
+
+            <label>Operating System:</label>
+            <input v-model="formData.operatingSystem" required>
+
+            <button type="submit">Tra cứu chi phí</button>
+        </form>
     </div>
     <div class="ec2-page">
         <div class="ec2-table">
@@ -91,6 +108,7 @@
 <script>
 import { instancesTableColumn } from "@/constains/instancesTableColumn";
 import EC2Service from "@/services/EC2Service";
+import AWSPricing from "@/services/AWSPricing";
 import ActivityLogService from "@/services/ActivityLogService";
 import NotificationPopup from "@/components/NotificationPopup.vue";
 export default {
@@ -108,7 +126,14 @@ export default {
             notificationMessage: '',
             notificationVisible: false,
             notificationTitle: '',
-            notificationType: 'success'
+            notificationType: 'success',
+            showForm: false,
+            formData: {
+            instanceType: '',
+            vCpu: '',
+            memory: '',
+            operatingSystem: ''
+            }
         }
     },
     created() {
@@ -124,6 +149,21 @@ export default {
             this.notificationType = type;
             this.notificationVisible = true;
         },
+        toggleForm() {
+        this.showForm = !this.showForm;
+    },
+    async fetchPriceForecast() {
+        try {
+            this.isLoading = true;
+            const res = await AWSPricing.getPrice(this.formData);
+            console.log(res);
+            this.isLoading = false;
+            this.showNotification(res.data, 'Thành công', 'success');
+        } catch (error) {
+            this.isLoading = false;
+            this.showNotification(error.response.data, 'Lỗi', 'error');
+        }
+    },
         async getInstancesList() {
             try {
                 this.isLoading = true;
@@ -273,6 +313,48 @@ export default {
 </script>
 <style scoped>
 @import url("../../../css/components/ec2service.css");
+
+.form-container {
+    background-color: #f5f5f5;
+    padding: 16px;
+    margin-top: 16px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+
+.form-container form {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-container label {
+    margin: 8px 0 4px;
+}
+
+.form-container input {
+    margin-bottom: 8px;
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+.form-container button {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    background-color: #50B83C;
+    color: white;
+    cursor: pointer;
+}
+
+.form-container button:hover {
+    background-color: #4acf2f;
+}
+
+.form-container button:focus {
+    background-color: #067933;
+}
+
 
 .ec2-page-title {
     width: 100%;

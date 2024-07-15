@@ -26,6 +26,10 @@ class AwsCostExplorerService {
         const response = await instances.post(`${this.controller}/GetForecastedCosts?startDate=${startDate}&endDate=${endDate}`)
         return response
     }
+    async GetCostData(startDate, endDate){
+        const response = await instances.post(`${this.controller}/cost-explorer-data?startDate=${startDate}&endDate=${endDate}`)
+        return response
+    }
 }
 
 export default new AwsCostExplorerService();

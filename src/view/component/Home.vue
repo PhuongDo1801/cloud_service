@@ -1,4 +1,14 @@
 <template>
+    <div>
+        <NotificationPopup 
+            :message="notificationMessage" 
+            :visible="notificationVisible" 
+            :title="notificationTitle" 
+            :type="notificationType"
+            @close="notificationVisible = false" 
+        />
+        <!-- Nội dung khác của trang -->
+    </div>
     <div v-show="isLoading" class="background--loading">
         <div class="icon--loading"></div>
     </div>
@@ -29,14 +39,20 @@
   
 <script>
 import VueApexCharts from "vue3-apexcharts";
-import AwsCostExplorerService from "@/services/AwsCostExplorerService"
+import AwsCostExplorerService from "@/services/AwsCostExplorerService";
+import NotificationPopup from "@/components/NotificationPopup.vue";
 export default {
     name: "HomePage",
     components: {
         apexChart: VueApexCharts,
+        NotificationPopup,
     },
     data() {
         return {
+            notificationMessage: '',
+            notificationVisible: false,
+            notificationTitle: '',
+            notificationType: 'success', // hoặc 'error' tùy thuộc vào tình huống,
             isLoading: false,
             totalCost: 0,
             predictedCost: 0,
@@ -105,6 +121,12 @@ export default {
         this.GetForecastedMonthEndCosts();
     },
     methods: {
+        showNotification(message, title, type) {
+            this.notificationMessage = message;
+            this.notificationTitle = title;
+            this.notificationType = type;
+            this.notificationVisible = true;
+        },
         async GetCostAndService() {
             try {
                 this.isLoading = true;
@@ -123,6 +145,7 @@ export default {
             } catch (error) {
                 this.isLoading = false;
                 console.error(error);
+                this.showNotification(error.response.data, 'Lỗi', 'error');
             }
         },
         calculateTotalCost() {
@@ -161,6 +184,7 @@ export default {
             }
             catch (error) {
                 console.log(error);
+                this.showNotification(error.response.data, 'Lỗi', 'error');
             }
         }
     }
